@@ -36,12 +36,12 @@ public class LruCacheManager {
 	}
 	
 	public void addBitmapToMemoryCache(String key, Bitmap bitmap) {  
-	    if (getBitmapFromMemCache(key) == null) {  
-	        mMemoryCache.put(key, bitmap);  
+	    if (getBitmapFromMemCache(key) == null) {
+	        mMemoryCache.put(key, bitmap);
 	    }
 	}
 	
-	public Bitmap getBitmapFromMemCache(String key) {  
-	    return mMemoryCache.get(key);  
+	public Bitmap getBitmapFromMemCache(String key) {
+	    return mMemoryCache.get(key);
 	}
 }

@@ -10,13 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.cim.model.RecentChat;
-import com.example.cim.test.TestData;
-import com.example.cim.ui.ChatActivity;
-import com.example.cim.util.CIMDataConfig;
-
 import android.content.ContentValues;
 import android.content.Context;
+
+import com.example.cim.model.RecentChat;
+import com.example.cim.test.TestData;
+import com.example.cim.util.CIMDataConfig;
 
 public class MessageListManage {
 
@@ -124,6 +123,7 @@ public class MessageListManage {
 							jsonObject.getString("groupName"));
 					value.put("M_Statu", jsonObject.getInt("statu"));
 					value.put("M_UserID", userAccount);
+					value.put("M_JSon", jsonObject.getString("JSonId"));
 					DBManager.getInstance(mContext)
 							.insert(MyDatabaseHelper.TABLE_MESSAGE, value,
 									database);
@@ -230,16 +230,22 @@ public class MessageListManage {
 						chat.setGroupType(type);//消息类型（1为私聊室、2为群聊室）
 						String groupName = cursor2.getString(cursor2
 								.getColumnIndex("M_GroupName"));
-						chat.setGroupName(groupName);//互动室名称(可以忽略)
+						chat.setGroupName(groupName);//互动室名称
+						String JSonId = cursor2.getString(cursor2
+								.getColumnIndex("M_JSon"));
 						String userName = null;
 						String content = null;
+						String picture = null;
 						if (type == 1) {
 							String[] group = groupName.split(":");
+							String[] json = JSonId.split(":");
 							if(group[0].equals(CIMDataConfig.getString(mContext,
 									CIMDataConfig.KEY_USERNAME))){
 								userName = group[1];
+								picture = json[1];
 							}else{
 								userName = group[0];
+								picture = json[0];
 							}
 							content = cursor2.getString(cursor2
 									.getColumnIndex("M_Content"));
@@ -251,7 +257,9 @@ public class MessageListManage {
 									+ " : "
 									+ cursor2.getString(cursor2
 											.getColumnIndex("M_Content"));
+							picture = groupId;//群聊时，用群ID来获取群头像
 						}
+//						chat.setImgPath(picture);//互动室头像
 						chat.setUserName(userName);//互动室名称
 						chat.setUserFeel(content);//发送内容
 						String time = cursor2.getString(cursor2

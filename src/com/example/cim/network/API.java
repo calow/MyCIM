@@ -24,6 +24,7 @@ public class API {
 	public final static String SendMsg_URL = Constant.SERVER_URL + "/csm/";
 	public final static String User_URL = Constant.SERVER_URL + "/user/";
 	public final static String UserLogin_URL = Constant.SERVER_URL + "/user/user_login.action";
+	public final static String UpAndDown_URL = Constant.SERVER_URL + "/upanddown/";
 
 	public static String httpPost(String url, Map<String, String> map, File file)
 			throws ClientProtocolException, IOException {

@@ -318,7 +318,7 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 						String client_messageId = object2
 								.getString("client_messageId");
 
-						boolean result = updateSendingMessage(Integer
+						updateSendingMessage(Integer
 								.valueOf(messageId), Integer
 								.valueOf(messageSetId), CIMDataConfig
 								.getString(ChatActivity.this,

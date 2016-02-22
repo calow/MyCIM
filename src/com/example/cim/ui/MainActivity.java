@@ -28,6 +28,7 @@ import com.example.cim.cache.MessageManage;
 import com.example.cim.fragment.ConstactFatherFragment;
 import com.example.cim.fragment.DynamicFragment;
 import com.example.cim.fragment.NewsFragmentFather;
+import com.example.cim.fragment.SettingFragment;
 import com.example.cim.manager.CIMPushManager;
 import com.example.cim.model.RecentChat;
 import com.example.cim.nio.constant.Constant;
@@ -62,6 +63,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 	private NewsFragmentFather newsFragmentFather;
 	private ConstactFatherFragment constactFatherFragment;
 	private DynamicFragment dynamicFragment;
+	private SettingFragment settingFragment;
 	private FragmentManager fm;
 
 	@Override
@@ -135,6 +137,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 
 		@Override
 		public void onClick(View v) {
+			setButton(v);
 			FragmentTransaction ft = fm.beginTransaction();
 			if (newsFragmentFather == null) {
 				newsFragmentFather = new NewsFragmentFather();
@@ -147,8 +150,10 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 			if (dynamicFragment != null) {
 				ft.hide(dynamicFragment);
 			}
+			if(settingFragment != null){
+				ft.hide(settingFragment);
+			}
 			ft.commit();
-			setButton(v);
 		}
 	};
 
@@ -156,6 +161,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 
 		@Override
 		public void onClick(View v) {
+			setButton(v);
 			FragmentTransaction ft = fm.beginTransaction();
 			if (constactFatherFragment == null) {
 				constactFatherFragment = new ConstactFatherFragment();
@@ -168,8 +174,10 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 			if (dynamicFragment != null) {
 				ft.hide(dynamicFragment);
 			}
+			if(settingFragment != null){
+				ft.hide(settingFragment);
+			}
 			ft.commit();
-			setButton(v);
 		}
 	};
 
@@ -177,9 +185,23 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 
 		@Override
 		public void onClick(View v) {
-			// FragmentTransaction ft = fm.beginTransaction();
-			// ft.hide(newsFragmentFather).hide(constactFatherFragment).show(dynamicFragment).commit();
 			setButton(v);
+			FragmentTransaction ft = fm.beginTransaction();
+			if (dynamicFragment == null) {
+				dynamicFragment = new DynamicFragment();
+				ft.add(R.id.fl_content, dynamicFragment);
+			}
+			ft.show(dynamicFragment);
+			if (newsFragmentFather != null) {
+				ft.hide(newsFragmentFather);
+			}
+			if (constactFatherFragment != null) {
+				ft.hide(constactFatherFragment);
+			}
+			if(settingFragment != null){
+				ft.hide(settingFragment);
+			}
+			ft.commit();
 		}
 	};
 
@@ -187,9 +209,23 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 
 		@Override
 		public void onClick(View v) {
-			// FragmentTransaction ft = fm.beginTransaction();
-			// ft.hide(fragment[0]).hide(fragment[1]).show(fragment[2]).commit();
 			setButton(v);
+			FragmentTransaction ft = fm.beginTransaction();
+			if(settingFragment == null){
+				settingFragment = new SettingFragment();
+				ft.add(R.id.fl_content, settingFragment);
+			}
+			ft.show(settingFragment);
+			if (newsFragmentFather != null) {
+				ft.hide(newsFragmentFather);
+			}
+			if (constactFatherFragment != null) {
+				ft.hide(constactFatherFragment);
+			}
+			if (dynamicFragment != null) {
+				ft.hide(dynamicFragment);
+			}
+			ft.commit();
 		}
 	};
 
@@ -232,7 +268,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 	 */
 	@Override
 	public void onMessageReceived(Message message) {
-		if(message != null){
+		if (message != null) {
 			List<RecentChat> list = MessageListManage.getInstance(mContext)
 					.getChatRoomList(
 							null,
@@ -290,7 +326,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 			newsFragmentFather.updateMessageList(list);
 		}
 	}
-	
+
 	public void dispatchFriendList(String message) {
 		if (message != null && !message.equals("") && !message.equals("null")) {
 			if (constactFatherFragment != null

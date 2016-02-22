@@ -47,7 +47,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 			+ "  M_GroupID int NOT NULL,"
 			+ "  M_GroupName varchar(20) NOT NULL,"
 			+ "  M_Statu int NOT NULL,"
-			+ "  M_UserID varchar(20) NOT NULL"
+			+ "  M_UserID varchar(20) NOT NULL,"
+			+ "  M_JSon varchar(20) NOT NULL"
 			+ ") ";
 	
 	public static final String FRIENDGROUPS_TABLE = ""
