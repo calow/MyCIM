@@ -1,10 +1,11 @@
 package com.example.cim.fragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import net.sqlcipher.database.SQLiteDatabase;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,10 +20,7 @@ import com.example.cim.R;
 import com.example.cim.adapter.ExpAdapter;
 import com.example.cim.asynctask.AsyncTaskBase;
 import com.example.cim.cache.FriendListManage;
-import com.example.cim.manager.CIMPushManager;
 import com.example.cim.model.RecentChat;
-import com.example.cim.nio.mutual.SentBody;
-import com.example.cim.test.TestData;
 import com.example.cim.ui.CIMconstactActivity;
 import com.example.cim.util.CIMDataConfig;
 import com.example.cim.view.IphoneTreeView;
@@ -39,6 +37,7 @@ public class ConstactFragment extends Fragment {
 	private LoadingView mLoadingView;
 	private ExpAdapter mExpAdapter;
 	private HashMap<String, List<RecentChat>> maps = new HashMap<String, List<RecentChat>>();
+	private List<String> groupNames = new ArrayList<String>();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +61,7 @@ public class ConstactFragment extends Fragment {
 		mIphoneTreeView.setHeaderView(LayoutInflater.from(mContext).inflate(
 				R.layout.fragment_constact_head_view, mIphoneTreeView, false));
 		mIphoneTreeView.setGroupIndicator(null);
-		mExpAdapter = new ExpAdapter(mContext, maps, mIphoneTreeView,
+		mExpAdapter = new ExpAdapter(mContext, groupNames, maps, mIphoneTreeView,
 				mSearchView);
 		mIphoneTreeView.setAdapter(mExpAdapter);
 		constacts.setOnClickListener(new OnClickListener() {
@@ -94,6 +93,12 @@ public class ConstactFragment extends Fragment {
 						null,
 						CIMDataConfig.getString(mContext,
 								CIMDataConfig.KEY_ACCOUNT));
+				Set<String> keys = maps.keySet();
+				List<String> gn = new ArrayList<String>(); 
+				for(String s : keys){
+					gn.add(s);
+				}
+				groupNames = gn;
 				// 获取缓存里的好友列表----
 				result = 1;
 			} catch (Exception e) {
@@ -106,7 +111,7 @@ public class ConstactFragment extends Fragment {
 		protected void onPostExecute(Integer result) {
 			super.onPostExecute(result);
 			if(result == 1){
-				mExpAdapter.updateData(maps);
+				mExpAdapter.updateData(groupNames, maps);
 				mExpAdapter.notifyDataSetChanged();
 			}
 		}
@@ -122,7 +127,12 @@ public class ConstactFragment extends Fragment {
 				null,
 				CIMDataConfig.getString(mContext,
 						CIMDataConfig.KEY_ACCOUNT));
-		mExpAdapter.updateData(mapList);
+		Set<String> keys = maps.keySet();
+		List<String> gn = new ArrayList<String>(); 
+		for(String s : keys){
+			gn.add(s);
+		}
+		mExpAdapter.updateData(gn, mapList);
 		mExpAdapter.notifyDataSetChanged();
 	}
 }

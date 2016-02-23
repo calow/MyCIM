@@ -14,6 +14,7 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import com.example.cim.model.RecentChat;
+import com.example.cim.network.API;
 import com.example.cim.test.TestData;
 import com.example.cim.util.CIMDataConfig;
 
@@ -38,48 +39,6 @@ public class MessageListManage {
 		return instance;
 	}
 
-//	public void saveOrUpdate(String message, SQLiteDatabase database) {
-//		try {
-//			JSONArray jsonArray = new JSONArray(message);
-//			List<ContentValues> list = new ArrayList<ContentValues>();
-//			System.out.println(jsonArray);
-//			JSONObject jsonObject;
-//			ContentValues contentValues;
-//			for (int i = 0; i < jsonArray.length(); i++) {
-//				jsonObject = (JSONObject) jsonArray.get(i);
-//				contentValues = new ContentValues();
-//				contentValues
-//						.put("ML_GroupID", jsonObject.getString("groupId"));
-//				contentValues.put("ML_GroupName",
-//						jsonObject.getString("groupName"));
-//				contentValues.put("ML_UnreadCount",
-//						jsonObject.getString("unReadCounts"));
-//				contentValues.put("ML_FromUserID",
-//						jsonObject.getString("senderLoginId"));
-//				contentValues.put("ML_FromUserName",
-//						jsonObject.getString("senderNickName"));
-//				contentValues.put("ML_ToUserID",
-//						jsonObject.getString("receiverLoginId"));
-//				contentValues.put("ML_Type", jsonObject.getString("groupType"));
-//				contentValues.put("ML_Content",
-//						jsonObject.getString("messageContent"));
-//				contentValues.put("ML_ResourceID",
-//						jsonObject.getString("messageResourceId"));
-//				contentValues.put(
-//						"ML_CreateTime",
-//						String.valueOf(jsonObject.getJSONObject(
-//								"messageCreateTime").get("time")));
-//				contentValues.put("ML_BelongTo", CIMDataConfig.getString(
-//						mContext, CIMDataConfig.KEY_ACCOUNT));
-//				list.add(contentValues);
-//			}
-//			DBManager.getInstance(mContext).replace(
-//					MyDatabaseHelper.TABLE_MESSAGE_LIST, list, database);
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
 	public List<String> saveOrUpdateMessage(String message, SQLiteDatabase database){
 		String[] columns = { "M_ID", "M_MessageID", "M_MessageSetID" };
 		String selection = "M_MessageID = ? and M_MessageSetID = ? and M_UserID = ?";
@@ -137,66 +96,6 @@ public class MessageListManage {
 		return messageSetIdList;
 	}
 
-//	public List<RecentChat> getMessageList(SQLiteDatabase database,
-//			String userAccount) {
-//		String selection = "ML_BelongTo = ?";
-//		String[] selectionArgs = new String[] { userAccount };
-//		String orderBy = "ML_CreateTime desc";
-//		Cursor cursor = DBManager.getInstance(mContext).select(
-//				MyDatabaseHelper.TABLE_MESSAGE_LIST, null, selection,
-//				selectionArgs, null, null, orderBy, database);
-//		List<RecentChat> list = new ArrayList<RecentChat>();
-//		if (cursor != null) {
-//			int i = 0;
-//			while (cursor.moveToNext()) {
-//				RecentChat chat = new RecentChat();
-//				String userId = cursor.getString(cursor
-//						.getColumnIndex("ML_FromUserID"));
-//				int type = cursor.getInt(cursor.getColumnIndex("ML_Type"));
-//				String groupName = cursor.getString(cursor
-//						.getColumnIndex("ML_GroupName"));
-//				String userName = null;
-//				String content = null;
-//				if (type == 0) {
-//					String[] group = groupName.split(":");
-//					if(group[0].equals(CIMDataConfig.getString(mContext,
-//							CIMDataConfig.KEY_USERNAME))){
-//						userName = group[1];
-//					}else{
-//						userName = group[0];
-//					}
-//					content = cursor.getString(cursor
-//							.getColumnIndex("ML_Content"));
-//				} else if (type == 1) {
-//					userName = cursor.getString(cursor
-//							.getColumnIndex("ML_GroupName"));
-//					content = cursor.getString(cursor
-//							.getColumnIndex("ML_FromUserName"))
-//							+ " : "
-//							+ cursor.getString(cursor
-//									.getColumnIndex("ML_Content"));
-//				}
-//				String time = cursor.getString(cursor
-//						.getColumnIndex("ML_CreateTime"));
-//				String groupId = cursor.getString(cursor
-//						.getColumnIndex("ML_GroupID"));
-//				int t = i % 8;
-//				chat.setUserName(userName);
-//				chat.setUserFeel(content);
-//				chat.setUserTime(time);
-//				chat.setImgPath(TestData.dir + TestData.names[t]);
-//				chat.setGroupId(groupId);
-//				chat.setUserId(userId);
-//				chat.setGroupType(type);
-//				chat.setGroupName(groupName);
-//				list.add(chat);
-//				i++;
-//			}
-//			cursor.close();
-//		}
-//		return list;
-//	}
-	
 	public List<RecentChat> getChatRoomList(SQLiteDatabase database,
 			String userAccount){
 		String sql = "select count(*), M_GroupID from message where M_UserID=? and M_Statu=? group by M_GroupID order by M_CreateTime desc";
@@ -242,10 +141,10 @@ public class MessageListManage {
 							if(group[0].equals(CIMDataConfig.getString(mContext,
 									CIMDataConfig.KEY_USERNAME))){
 								userName = group[1];
-								picture = json[1];
+								picture = API.UpAndDown_URL + "download_userPic.action" + "?id=" + json[1];
 							}else{
 								userName = group[0];
-								picture = json[0];
+								picture = API.UpAndDown_URL + "download_userPic.action" + "?id=" + json[0];
 							}
 							content = cursor2.getString(cursor2
 									.getColumnIndex("M_Content"));
@@ -257,9 +156,9 @@ public class MessageListManage {
 									+ " : "
 									+ cursor2.getString(cursor2
 											.getColumnIndex("M_Content"));
-							picture = groupId;//群聊时，用群ID来获取群头像
+							picture = API.UpAndDown_URL + "download_groupPic.action" + "?id=" + groupId;//群聊时，用群ID来获取群头像
 						}
-//						chat.setImgPath(picture);//互动室头像
+						chat.setImgPath(picture);//互动室头像
 						chat.setUserName(userName);//互动室名称
 						chat.setUserFeel(content);//发送内容
 						String time = cursor2.getString(cursor2
@@ -277,9 +176,4 @@ public class MessageListManage {
 		}
 		return list;
 	}
-	
-//	public long saveOrUpdate(ContentValues value, SQLiteDatabase database){
-//		return DBManager.getInstance(mContext).replace(
-//				MyDatabaseHelper.TABLE_MESSAGE_LIST, value, database);
-//	}
 }

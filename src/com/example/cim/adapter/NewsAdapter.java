@@ -32,6 +32,7 @@ import com.example.cim.R;
 import com.example.cim.cache.DiskLruCacheManager;
 import com.example.cim.cache.LruCacheManager;
 import com.example.cim.model.RecentChat;
+import com.example.cim.network.API;
 import com.example.cim.util.DateUtil;
 import com.example.cim.util.ImgUtil;
 import com.example.cim.util.ImgUtil.OnLoadBitmapListener;
@@ -93,34 +94,9 @@ public class NewsAdapter extends BaseAdapter {
 			holder = (Holder) convertView.getTag();
 		}
 		String path = chat.getImgPath();
-		
-		//获取用户头像方式1
-		if (hashMaps.containsKey(path)) {
-			holder.iv.setImageBitmap(hashMaps.get(path).get());
-			ImgUtil.getInstance().reomoveCache(path);
-		} else {
-			holder.iv.setTag(chat.getImgPath());
-			ImgUtil.getInstance().loadBitmap(path, new OnLoadBitmapListener() {
-
-				@Override
-				public void loadImage(Bitmap bitmap, String path) {
-					ImageView iv = (ImageView) mCustomListView
-							.findViewWithTag(path);
-					if (iv != null && bitmap != null) {
-						bitmap = SystemMethod.toRoundCorner(bitmap, 15);
-						iv.setImageBitmap(bitmap);
-						if (!hashMaps.containsKey(path)) {
-							hashMaps.put(path,
-									new SoftReference<Bitmap>(bitmap));
-						}
-					}
-				}
-			});
-		}
-		
-		//获取用户头像方式2
-//		loadBitmaps(holder.iv, path);
-
+		holder.iv.setTag(path);
+		//获取用户头像
+		loadBitmaps(holder.iv, path);
 		holder.tv_name.setText(chat.getUserName());
 		holder.tv_feel.setText(chat.getUserFeel());
 		Date date = new Date(Long.valueOf(chat.getUserTime()));

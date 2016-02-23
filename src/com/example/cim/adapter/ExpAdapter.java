@@ -1,13 +1,25 @@
 package com.example.cim.adapter;
 
-import java.lang.ref.SoftReference;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
+import libcore.io.DiskLruCache;
+import libcore.io.DiskLruCache.Snapshot;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +28,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.cim.R;
+import com.example.cim.cache.DiskLruCacheManager;
+import com.example.cim.cache.LruCacheManager;
 import com.example.cim.model.RecentChat;
-import com.example.cim.util.FileUtil;
-import com.example.cim.util.ImgUtil;
-import com.example.cim.util.ImgUtil.OnLoadBitmapListener;
-import com.example.cim.util.SystemMethod;
+import com.example.cim.network.API;
 import com.example.cim.view.IphoneTreeView;
 import com.example.cim.view.IphoneTreeView.IphoneTreeHeaderAdapter;
 
@@ -29,78 +40,24 @@ public class ExpAdapter extends BaseExpandableListAdapter implements
 
 	private static final String TAG = "ExpAdapter";
 	private Context mContext;
+	private List<String> groupNames;
 	private HashMap<String, List<RecentChat>> maps;
 	private IphoneTreeView mIphoneTreeView;
 	private View mSearchView;
-	private HashMap<String, SoftReference<Bitmap>> hashMaps = new HashMap<String, SoftReference<Bitmap>>();
-	private String dir = FileUtil.getRecentChatPath();
 
-	// 伪数据
-	private HashMap<Integer, Integer> groupStatusMap;
-	private String[] groups = { "我的好友", "家人", "S2S76班", "S2S73班", "S1S24班",
-			"S1S5班", "亲戚" };
-	private String[][] children = {
-			{ "宋慧乔", "章泽天", "宋茜", "韩孝珠", "景甜", "刘亦菲", "康逸琨", "邓紫棋" },
-			{ "宋慧乔", "章泽天", "宋茜", "韩孝珠", "景甜", "刘亦菲", "康逸琨", "邓紫棋" },
-			{ "宋慧乔", "章泽天", "宋茜", "韩孝珠", "景甜", "刘亦菲", "康逸琨", "邓紫棋" },
-			{ "宋慧乔", "章泽天", "宋茜", "韩孝珠", "景甜", "刘亦菲", "康逸琨", "邓紫棋" },
-			{ "宋慧乔", "章泽天", "宋茜", "韩孝珠", "景甜", "刘亦菲", "康逸琨", "邓紫棋" },
-			{ "宋慧乔", "章泽天", "宋茜", "韩孝珠", "景甜", "刘亦菲", "康逸琨", "邓紫棋" },
-			{ "宋慧乔", "章泽天", "宋茜", "韩孝珠", "景甜", "刘亦菲", "康逸琨", "邓紫棋" } };
-	private String[][] childPath = {
-			{ dir + "songhuiqiao.jpg", dir + "zhangzetian.jpg",
-					dir + "songqian.jpg", dir + "hangxiaozhu.jpg",
-					dir + "jingtian.jpg", dir + "liuyifei.jpg",
-					dir + "kangyikun.jpg", dir + "dengziqi.jpg" },
-			{ dir + "songhuiqiao.jpg", dir + "zhangzetian.jpg",
-					dir + "songqian.jpg", dir + "hangxiaozhu.jpg",
-					dir + "jingtian.jpg", dir + "liuyifei.jpg",
-					dir + "kangyikun.jpg", dir + "dengziqi.jpg" },
-			{ dir + "songhuiqiao.jpg", dir + "zhangzetian.jpg",
-					dir + "songqian.jpg", dir + "hangxiaozhu.jpg",
-					dir + "jingtian.jpg", dir + "liuyifei.jpg",
-					dir + "kangyikun.jpg", dir + "dengziqi.jpg" },
-			{ dir + "songhuiqiao.jpg", dir + "zhangzetian.jpg",
-					dir + "songqian.jpg", dir + "hangxiaozhu.jpg",
-					dir + "jingtian.jpg", dir + "liuyifei.jpg",
-					dir + "kangyikun.jpg", dir + "dengziqi.jpg" },
-			{ dir + "songhuiqiao.jpg", dir + "zhangzetian.jpg",
-					dir + "songqian.jpg", dir + "hangxiaozhu.jpg",
-					dir + "jingtian.jpg", dir + "liuyifei.jpg",
-					dir + "kangyikun.jpg", dir + "dengziqi.jpg" },
-			{ dir + "songhuiqiao.jpg", dir + "zhangzetian.jpg",
-					dir + "songqian.jpg", dir + "hangxiaozhu.jpg",
-					dir + "jingtian.jpg", dir + "liuyifei.jpg",
-					dir + "kangyikun.jpg", dir + "dengziqi.jpg" },
-			{ dir + "songhuiqiao.jpg", dir + "zhangzetian.jpg",
-					dir + "songqian.jpg", dir + "hangxiaozhu.jpg",
-					dir + "jingtian.jpg", dir + "liuyifei.jpg",
-					dir + "kangyikun.jpg", dir + "dengziqi.jpg" } };
-
-	private String[][] onlineStatu = {
-			{ "1", "1", "1", "1", "1", "1", "1", "1" },
-			{ "1", "1", "1", "1", "1", "1", "1", "1" },
-			{ "1", "1", "1", "1", "1", "1", "1", "1" },
-			{ "1", "1", "1", "1", "1", "1", "1", "1" },
-			{ "1", "1", "1", "1", "1", "1", "1", "1" },
-			{ "1", "1", "1", "1", "1", "1", "1", "1" },
-			{ "1", "1", "1", "1", "1", "1", "1", "1" },
-			{ "1", "1", "1", "1", "1", "1", "1", "1" } };
-
-	private String[][] childrendFeel = null;
-
-	public ExpAdapter(Context context, HashMap<String, List<RecentChat>> maps,
+	private Map<Integer, Integer> groupStatusMap = new HashMap<Integer, Integer>();
+	public ExpAdapter(Context context, List<String> groupNames,
+			HashMap<String, List<RecentChat>> maps,
 			IphoneTreeView mIphoneTreeView, View searchView) {
 		this.mContext = context;
+		this.groupNames = groupNames;
 		this.maps = maps;
 		this.mIphoneTreeView = mIphoneTreeView;
-		groupStatusMap = new HashMap<Integer, Integer>();
 		mSearchView = searchView;
-		initTreeData();
 	}
 
 	public Object getChild(int groupPosition, int childPosition) {
-		return children[groupPosition][childPosition];
+		return maps.get(groupNames.get(groupPosition)).get(childPosition);
 	}
 
 	public long getChildId(int groupPosition, int childPosition) {
@@ -108,21 +65,23 @@ public class ExpAdapter extends BaseExpandableListAdapter implements
 	}
 
 	public int getChildrenCount(int groupPosition) {
-		if(children[groupPosition] != null){
-			return children[groupPosition].length;
-		}else{
-			return 0;
+		if(groupPosition >= 0){
+			return maps.get(groupNames.get(groupPosition)).size();
 		}
+		return 0;
 	}
 
 	public Object getGroup(int groupPosition) {
-		return groups[groupPosition];
+		if(groupPosition >= 0){
+			return groupNames.get(groupPosition);
+		}
+		return null;
 	}
 
 	public int getGroupCount() {
-		if(groups != null){
-			return groups.length;
-		}else{
+		if (groupNames != null) {
+			return groupNames.size();
+		} else {
 			return 0;
 		}
 	}
@@ -157,34 +116,14 @@ public class ExpAdapter extends BaseExpandableListAdapter implements
 			holder = (GroupHolder) convertView.getTag();
 		}
 
-		String path = childPath[groupPosition][childPosition];
-		if (hashMaps.containsKey(path)) {
-			holder.iconView.setImageBitmap(hashMaps.get(path).get());
-			// 另一个地方缓存释放资源
-			ImgUtil.getInstance().reomoveCache(path);
-		} else {
-			holder.iconView.setTag(path);
-			ImgUtil.getInstance().loadBitmap(path, new OnLoadBitmapListener() {
-				@Override
-				public void loadImage(Bitmap bitmap, String path) {
-					ImageView iv = (ImageView) mIphoneTreeView
-							.findViewWithTag(path);
-					if (bitmap != null && iv != null) {
-						bitmap = SystemMethod.toRoundCorner(bitmap, 15);
-						iv.setImageBitmap(bitmap);
-
-						if (!hashMaps.containsKey(path)) {
-							hashMaps.put(path,
-									new SoftReference<Bitmap>(bitmap));
-						}
-					}
-				}
-			});
-
-		}
-		holder.nameView.setText(getChild(groupPosition, childPosition)
-				.toString());
-		holder.feelView.setText("爱生活...爱Android...");
+		RecentChat rc = maps.get(groupNames.get(groupPosition)).get(
+				childPosition);
+		String path = API.UpAndDown_URL + "download_userPic.action" + "?id="
+				+ rc.getUserId();
+		holder.iconView.setTag(path);
+		loadBitmaps(holder.iconView, path);
+		holder.nameView.setText(rc.getUserName());
+		holder.feelView.setText(rc.getUserFeel());
 		return convertView;
 	}
 
@@ -206,9 +145,18 @@ public class ExpAdapter extends BaseExpandableListAdapter implements
 		} else {
 			holder = (ChildHolder) convertView.getTag();
 		}
-		holder.nameView.setText(groups[groupPosition]);
-		holder.onLineView.setText(getChildrenCount(groupPosition) + "/"
-				+ getChildrenCount(groupPosition));
+		String groupName = groupNames.get(groupPosition);
+		List<RecentChat> list = maps.get(groupName);
+		int count = list.size();
+		int t = 0;
+		for (int i = 0; i < count; i++) {
+			RecentChat rc = list.get(i);
+			if (rc.getStatu() == "1") {
+				t++;
+			}
+		}
+		holder.nameView.setText(groupName);
+		holder.onLineView.setText(t + "/" + getChildrenCount(groupPosition));
 		if (isExpanded) {
 			holder.iconView.setImageResource(R.drawable.qb_down);
 		} else {
@@ -236,11 +184,20 @@ public class ExpAdapter extends BaseExpandableListAdapter implements
 	@Override
 	public void configureTreeHeader(View header, int groupPosition,
 			int childPosition, int alpha) {
-		((TextView) header.findViewById(R.id.group_name))
-				.setText(groups[groupPosition]);
-		((TextView) header.findViewById(R.id.online_count))
-				.setText(getChildrenCount(groupPosition) + "/"
-						+ getChildrenCount(groupPosition));
+		((TextView) header.findViewById(R.id.group_name)).setText(groupNames
+				.get(groupPosition));
+		String groupName = groupNames.get(groupPosition);
+		List<RecentChat> list = maps.get(groupName);
+		int count = list.size();
+		int t = 0;
+		for (int i = 0; i < count; i++) {
+			RecentChat rc = list.get(i);
+			if (rc.getStatu() == "1") {
+				t++;
+			}
+		}
+		((TextView) header.findViewById(R.id.online_count)).setText(t + "/"
+				+ getChildrenCount(groupPosition));
 	}
 
 	@Override
@@ -269,51 +226,177 @@ public class ExpAdapter extends BaseExpandableListAdapter implements
 		ImageView iconView;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void initTreeData() {
-		if (maps != null && maps.size() > 0) {
-			String[] parent = new String[maps.size()];// 分组名称
-			String[][] cs = new String[maps.size()][];// 状态
-			String[][] cn = new String[maps.size()][];// 名称
-			String[][] cp = new String[maps.size()][];// 头像路径
-			String[][] cf = new String[maps.size()][];// 感受
-			Set keySet = maps.keySet();// 返回键的集合
-			Iterator it = keySet.iterator();
-			int i = 0;
-			while (it.hasNext()) {
-				// groupName
-				String key = (String) it.next();
-				parent[i] = key;
-				// childrend
-				List<RecentChat> rc = maps.get(key);
-				if (rc != null) {
-					String[] childStatu = new String[rc.size()];
-					String[] childName = new String[rc.size()];
-					String[] childPath = new String[rc.size()];
-					String[] childFeel = new String[rc.size()];
-					for (int j = 0; j < rc.size(); j++) {
-						childStatu[j] = rc.get(j).getStatu();
-						childName[j] = rc.get(j).getUserName();
-						childPath[j] = rc.get(j).getImgPath();
-						childFeel[j] = rc.get(j).getUserFeel();
-					}
-					cs[i] = childStatu;
-					cn[i] = childName;
-					cp[i] = childPath;
-					cf[i] = childFeel;
+	public void updateData(List<String> groupName,
+			HashMap<String, List<RecentChat>> map) {
+		this.groupNames = groupName;
+		this.maps = map;
+	}
+
+	/**
+	 * 加载Bitmap对象。此方法会在LruCache中检查所有屏幕中可见的ImageView的Bitmap对象，
+	 * 如果发现任何一个ImageView的Bitmap对象不在缓存中，就会开启异步线程去下载图片。
+	 */
+	public void loadBitmaps(ImageView imageView, String imageUrl) {
+		try {
+			LruCacheManager lruManager = LruCacheManager.getLruCacheManager();
+			Bitmap bitmap = lruManager.getBitmapFromMemCache(imageUrl);
+			if (bitmap == null) {
+				BitmapWorkerTask task = new BitmapWorkerTask();
+				task.execute(imageUrl);
+			} else {
+				if (imageView != null && bitmap != null) {
+					imageView.setImageBitmap(bitmap);
 				}
-				i++;
 			}
-			groups = parent;
-			children = cn;
-			onlineStatu = cs;
-			childPath = cp;
-			childrendFeel = cf;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-	
-	public void updateData(HashMap<String, List<RecentChat>> map){
-		maps = map;
-		initTreeData();
+
+	class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+
+		/**
+		 * 图片的URL地址
+		 */
+		private String imageUrl;
+
+		@Override
+		protected Bitmap doInBackground(String... params) {
+			LruCacheManager lruManager = LruCacheManager.getLruCacheManager();
+			DiskLruCacheManager diskManager = DiskLruCacheManager
+					.getDiskLruCacheManager(mContext);
+			DiskLruCache mDiskLruCache = diskManager.getDiskLruCache("picture");
+			imageUrl = params[0];
+			FileDescriptor fileDescriptor = null;
+			FileInputStream fileInputStream = null;
+			Snapshot snapShot = null;
+			try {
+				// 生成图片URL对应的key
+				final String key = hashKeyForDisk(imageUrl);
+				// 查找key对应的缓存
+				snapShot = mDiskLruCache.get(key);
+				if (snapShot == null) {
+					// 如果没有找到对应的缓存，则准备从网络上请求数据，并写入缓存
+					DiskLruCache.Editor editor = mDiskLruCache.edit(key);
+					if (editor != null) {
+						OutputStream outputStream = editor.newOutputStream(0);
+						if (downloadUrlToStream(imageUrl, outputStream)) {
+							editor.commit();
+						} else {
+							editor.abort();
+						}
+					}
+					// 缓存被写入后，再次查找key对应的缓存
+					snapShot = mDiskLruCache.get(key);
+				}
+				if (snapShot != null) {
+					fileInputStream = (FileInputStream) snapShot
+							.getInputStream(0);
+					fileDescriptor = fileInputStream.getFD();
+				}
+				// 将缓存数据解析成Bitmap对象
+				Bitmap bitmap = null;
+				if (fileDescriptor != null) {
+					bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+				}
+				if (bitmap != null) {
+					// 将Bitmap对象添加到内存缓存当中
+					lruManager.addBitmapToMemoryCache(params[0], bitmap);
+				}
+				return bitmap;
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (fileDescriptor == null && fileInputStream != null) {
+					try {
+						fileInputStream.close();
+					} catch (IOException e) {
+					}
+				}
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap bitmap) {
+			super.onPostExecute(bitmap);
+			// 根据Tag找到相应的ImageView控件，将下载好的图片显示出来.
+			ImageView imageView = (ImageView) mIphoneTreeView
+					.findViewWithTag(imageUrl);
+			if (imageView != null && bitmap != null) {
+				imageView.setImageBitmap(bitmap);
+			}
+		}
+
+		/**
+		 * 建立HTTP请求，并获取Bitmap对象。
+		 * 
+		 * @param imageUrl
+		 *            图片的URL地址
+		 * @return 解析后的Bitmap对象
+		 */
+		private boolean downloadUrlToStream(String urlString,
+				OutputStream outputStream) {
+			HttpURLConnection urlConnection = null;
+			BufferedOutputStream out = null;
+			BufferedInputStream in = null;
+			try {
+				final URL url = new URL(urlString);
+				urlConnection = (HttpURLConnection) url.openConnection();
+				in = new BufferedInputStream(urlConnection.getInputStream(),
+						8 * 1024);
+				out = new BufferedOutputStream(outputStream, 8 * 1024);
+				int b;
+				while ((b = in.read()) != -1) {
+					out.write(b);
+				}
+				return true;
+			} catch (final IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (urlConnection != null) {
+					urlConnection.disconnect();
+				}
+				try {
+					if (out != null) {
+						out.close();
+					}
+					if (in != null) {
+						in.close();
+					}
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+			}
+			return false;
+		}
+
+	}
+
+	/**
+	 * 使用MD5算法对传入的key进行加密并返回。
+	 */
+	public String hashKeyForDisk(String key) {
+		String cacheKey;
+		try {
+			final MessageDigest mDigest = MessageDigest.getInstance("MD5");
+			mDigest.update(key.getBytes());
+			cacheKey = bytesToHexString(mDigest.digest());
+		} catch (NoSuchAlgorithmException e) {
+			cacheKey = String.valueOf(key.hashCode());
+		}
+		return cacheKey;
+	}
+
+	private String bytesToHexString(byte[] bytes) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < bytes.length; i++) {
+			String hex = Integer.toHexString(0xFF & bytes[i]);
+			if (hex.length() == 1) {
+				sb.append('0');
+			}
+			sb.append(hex);
+		}
+		return sb.toString();
 	}
 }
