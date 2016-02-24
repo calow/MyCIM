@@ -1,0 +1,5 @@
+<Features>
+
+    <Feature name="mediaPlugin" value="com.example.plugin.MediaPlugin"></Feature>
+    <Feature name="phonePlugin" value="com.example.plugin.PhonePlugin"></Feature>
+</Features>
