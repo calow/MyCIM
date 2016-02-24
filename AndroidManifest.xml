@@ -61,6 +61,10 @@
         <activity
             android:name=".ui.ChatActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar" />
+        
+        <activity
+            android:name="com.example.testwebview.WebviewActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
 
         <!-- 推送服务 -->
         <service

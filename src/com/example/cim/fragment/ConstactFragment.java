@@ -8,12 +8,15 @@ import java.util.Set;
 import net.sqlcipher.database.SQLiteDatabase;
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.RelativeLayout;
 
 import com.example.cim.R;
@@ -22,12 +25,15 @@ import com.example.cim.asynctask.AsyncTaskBase;
 import com.example.cim.cache.FriendListManage;
 import com.example.cim.model.RecentChat;
 import com.example.cim.ui.CIMconstactActivity;
+import com.example.cim.ui.ChatActivity;
 import com.example.cim.util.CIMDataConfig;
+import com.example.cim.util.LogUtils;
 import com.example.cim.view.IphoneTreeView;
 import com.example.cim.view.LoadingView;
 
 public class ConstactFragment extends Fragment {
 
+	protected static final String TAG = "ConstactFragment";
 	private Context mContext;
 	private View mBaseView;
 
@@ -72,6 +78,25 @@ public class ConstactFragment extends Fragment {
 				startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.activity_up,
 						R.anim.fade_out);
+			}
+		});
+		
+		/**
+		 * 点击好友条目，跳转到私聊室
+		 */
+		mIphoneTreeView.setOnChildClickListener(new OnChildClickListener() {
+			
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v,
+					int groupPosition, int childPosition, long id) {
+				RecentChat chat = mExpAdapter.getRecentChatByGroupIdAndChildId(groupPosition, childPosition);
+				Intent intent = new Intent(mContext, ChatActivity.class);
+				intent.putExtra("id", chat.getGroupId());
+				intent.putExtra("userName", chat.getUserName());
+				intent.putExtra("groupType", chat.getGroupType());
+				intent.putExtra("groupName", chat.getGroupName());
+				mContext.startActivity(intent);
+				return true;
 			}
 		});
 

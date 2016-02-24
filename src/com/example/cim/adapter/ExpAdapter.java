@@ -399,4 +399,20 @@ public class ExpAdapter extends BaseExpandableListAdapter implements
 		}
 		return sb.toString();
 	}
+	
+	/**
+	 * 点击expandable标签的子标签时获取子标签内容
+	 * @param groupPosition expandable的父标签下标
+	 * @param childId 子标签下标
+	 * @return 返回子标签内容对象
+	 */
+	public RecentChat getRecentChatByGroupIdAndChildId(int groupPosition, int childPosition){
+		RecentChat result = null;
+		if(groupNames != null && groupNames.size() > 0){
+			String groupName = groupNames.get(groupPosition);
+			List<RecentChat> list = maps.get(groupName);
+			result = list.get(childPosition);
+		}
+		return result;
+	}
 }

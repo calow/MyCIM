@@ -18,7 +18,7 @@
             android:layout_height="match_parent" >
 
             <RelativeLayout
-                android:id="@+id/ll_dynamic"
+                android:id="@+id/rl_localplugin"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
@@ -31,7 +31,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/qq_leba_list_seek_feeds" />
+                    android:src="@drawable/qq_leba_list_seek_folder" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -39,7 +39,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/feeds"
-                    android:text="@string/friend_dynamic" />
+                    android:text="@string/local_plugin" />
 
                 <ImageView
                     android:id="@+id/arrow"
@@ -52,7 +52,7 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/qvip_pay_wallet_icon_arrow_right_normal" />
 
-                <ImageView
+                <!-- <ImageView
                     android:id="@+id/newest_tips"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
@@ -61,19 +61,20 @@
                     android:layout_toLeftOf="@id/arrow"
                     android:contentDescription="@string/app_name"
                     android:scaleType="fitXY"
-                    android:src="@drawable/kangyikun" />
+                    android:src="@drawable/kangyikun" /> -->
             </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/two"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ll_dynamic"
+                android:layout_below="@id/rl_localplugin"
                 android:layout_margin="10dp"
                 android:background="@drawable/ll_bg_d"
                 android:orientation="vertical" >
 
                 <RelativeLayout
+                    android:id="@+id/rl_baidu"
                     android:layout_width="match_parent"
                     android:layout_height="50dp" >
 
@@ -84,7 +85,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/qq_leba_list_seek_gamecenter" />
+                        android:src="@drawable/baidu" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -92,7 +93,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/game"
-                        android:text="@string/game_sring" />
+                        android:text="@string/baidu_sring" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -111,6 +112,7 @@
                     android:background="@color/devide_line" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_xinlang"
                     android:layout_width="match_parent"
                     android:layout_height="50dp" >
 
@@ -121,7 +123,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/qq_leba_list_seek_individuation" />
+                        android:src="@drawable/xinlang" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -129,7 +131,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/huodong"
-                        android:text="@string/huodong_string" />
+                        android:text="@string/xinlang_string" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -148,7 +150,7 @@
                     android:background="@color/devide_line" />
 
                 <RelativeLayout
-                    android:id="@+id/wifi"
+                    android:id="@+id/rl_tencent"
                     android:layout_width="match_parent"
                     android:layout_height="50dp" >
 
@@ -159,7 +161,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/qq_leba_list_seek_folder" />
+                        android:src="@drawable/tencent" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -167,7 +169,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/file"
-                        android:text="@string/fileHelper" />
+                        android:text="@string/tencent_string" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -186,6 +188,7 @@
                     android:background="@color/devide_line" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_souhu"
                     android:layout_width="match_parent"
                     android:layout_height="50dp" >
 
@@ -196,7 +199,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/qq_leba_list_seek_neighbour" />
+                        android:src="@drawable/souhu" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -204,7 +207,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/neighbour"
-                        android:text="@string/nearPeople" />
+                        android:text="@string/souhu_string" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -227,6 +230,7 @@
                 android:orientation="vertical" >
 
                 <RelativeLayout
+                    android:id="@+id/rl_fenghuang"
                     android:layout_width="match_parent"
                     android:layout_height="50dp" >
 
@@ -237,7 +241,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/qq_leba_list_seek_myfeeds" />
+                        android:src="@drawable/fenghuang" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -245,7 +249,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/myfeeds"
-                        android:text="@string/nearbyFeeds" />
+                        android:text="@string/fenghuang_string" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -264,6 +268,7 @@
                     android:background="@color/devide_line" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_wangyi"
                     android:layout_width="match_parent"
                     android:layout_height="50dp" >
 
@@ -274,7 +279,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/qq_leba_list_seek_saosao" />
+                        android:src="@drawable/wangyi" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -282,7 +287,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
                         android:layout_toRightOf="@id/saosao"
-                        android:text="@string/sweep" />
+                        android:text="@string/wangyi_string" />
 
                     <ImageView
                         android:layout_width="wrap_content"

@@ -80,13 +80,13 @@
     <string name="title6">推荐6</string>
     <string name="title7">推荐7</string>
     
-    <string name="friend_dynamic">好友动态</string>
-    <string name="game_sring">游戏</string>
-    <string name="huodong_string">活动</string>
-    <string name="fileHelper">文件助手</string>
-    <string name="nearPeople">附近的人</string>
-    <string name="nearbyFeeds">附近的群</string>
-    <string name="sweep">扫一扫</string>
+    <string name="local_plugin">本地插件</string>
+    <string name="baidu_sring">百度</string>
+    <string name="xinlang_string">新浪</string>
+    <string name="tencent_string">腾讯</string>
+    <string name="souhu_string">搜狐</string>
+    <string name="fenghuang_string">凤凰</string>
+    <string name="wangyi_string">网易</string>
     
     <string name="dynamic">动态</string>
     <string name="setting">设置</string>
