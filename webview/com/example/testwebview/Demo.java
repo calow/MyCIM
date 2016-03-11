@@ -1,32 +1,25 @@
 package com.example.testwebview;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
 import org.dom4j.io.SAXReader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -36,13 +29,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.webkit.WebView;
 
-import com.example.constant.Constant;
-import com.example.utils.ClassLoaderUtil;
-import com.example.utils.DLClassLoader;
+import com.example.cim.nio.constant.Constant;
+import com.example.tool.Tool;
 import com.example.utils.JarUtils;
+import com.example.utils.ToolLoaderUtil;
 
 import dalvik.system.DexClassLoader;
 
@@ -52,7 +44,7 @@ public class Demo {
 	Handler mHandler;
 
 	/** Instantiate the interface and set the context */
-	Demo(Context c, WebView v, Handler h) {
+	public Demo(Context c, WebView v, Handler h) {
 		mContext = c;
 		mWebView = v;
 		mHandler = h;
@@ -123,81 +115,81 @@ public class Demo {
 	/**
 	 * @方法：loadExtend
 	 * @描述：加载App之外的插件
-	 * @param toolId
-	 *            工具Id
-	 * @param action
-	 *            具体的action操作
 	 * @param callbackId
 	 *            回调Id
 	 * @param params
-	 *            传给插件的参数
+	 *            传即那里的参数（必须有：toolId、tvId）
 	 */
-	public void loadExtend(String toolId, String action, String callbackId,
-			String params) {
-		// 参数初始化
-		String sessionId = null;
-		String fileName = toolId + ".jar";// 文件名（插件名称）
-		String toolVersion = null;// 工具最新版本Id
-		IWebviewImpl pWebview = new IWebviewImpl(mContext, mWebView);
-		JSONObject pArgs = null;
-		try {
-			pArgs = new JSONObject(params);
-		} catch (JSONException e) {
-			e.printStackTrace();
-			Log.e("Demo", "前台传给插件的参数格式错误！");
-		}
-		boolean available = isNetworkAvailable(mContext);// 网络是否可用状态
-		if (isJarExit(mContext, fileName)) {
-			// 工具存在
-			if (available) {
+	public void loadExtend(final String callbackId, final String param) {
+		new Thread(new Runnable() {
 
-				// --------------------测试使用-------------------------
-				if (sessionId == null || sessionId.equals("")) {
-					sessionId = getSessionId();
+			@Override
+			public void run() {
+				// 参数初始化
+				try {
+					JSONObject params = new JSONObject(param);
+					String toolId = params.getString("toolId");
+					String tvId = params.getString("tvId");
+					params.put("callBackID", callbackId);
+					String fileName = toolId + ".jar";// 文件名（插件名称）
+					IWebviewImpl pWebview = new IWebviewImpl(mContext, mWebView);
+					boolean available = isNetworkAvailable(mContext);// 网络是否可用状态
+					if (isJarExit(mContext, fileName)) {// 工具存在
+						if (isNewestJar(mContext, fileName, tvId)) {// 是最新版本
+							// 是最新版本、运行工具
+							adjustToolTypeAndDo(pWebview, params, fileName);
+						} else {// 不是最新版本
+							if (available) {// 网络可用、下载工具
+								downloadToolAndAdjustToolTypeThenDo(pWebview,
+										params, fileName);
+							} else {// 网络不可用、运行旧版工具
+								adjustToolTypeAndDo(pWebview, params, fileName);
+							}
+						}
+					} else {// 工具不存在
+						if (available) {// 网络可用、下载工具并运行工具
+							downloadToolAndAdjustToolTypeThenDo(pWebview,
+									params, fileName);
+						} else {// 报错
+							returnErrorMessage(pWebview, callbackId, 401,
+									"工具不存在且网络不可用");
+						}
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-				// --------------------之后要删除-----------------------
-
-				// 工具存在、网络可用、判断是否最新版本
-				Map<String, String> map = getToolCurrentVersionIdWithController(
-						toolId, sessionId);
-				toolVersion = map.get("toolCurrentVersionID");
-				if (isNewestJar(mContext, fileName, toolVersion)) {
-					// 是最新版本、判断是否为有页面工具、无页面则运行工具
-					runToolAndAdjustIfWithPages(pWebview, mContext, fileName,
-							callbackId, action, toolId, pArgs);
-				} else {
-					// 不是最新版本、下载工具、判断是否为有页面工具、无页面则运行工具
-					// downloadToolAndRunToolAndReturnResult(pWebview, mContext,
-					// fileName, callbackId, action, toolId, pArgs,
-					// toolVersion, sessionId);
-				}
-			} else {
-				// 工具存在、网络不可用、不判断是否最新版本、判断是否为有页面工具、无页面则运行工具、有页面则返回结果给前台解压jar包
-				// runToolAndAdjustIfWithPages(pWebview, context, fileName,
-				// CallBackID, action, toolId, pArgsArray);
 			}
-		} else {
-			// 工具不存在
-			if (available) {
+		}).start();
 
-				// --------------------测试使用---------------------------
-				if (sessionId == null || sessionId.equals("")) {
-					sessionId = getSessionId();
+	}
+
+	/**
+	 * @方法：toolAction
+	 * @描述：有页面工具的请求拦截方法
+	 * @param callbackId 回调Id
+	 * @param param 传递进来的参数（需要toolId）
+	 */
+	public void toolAction(final String callbackId, final String param) {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// 参数初始化
+				try {
+					JSONObject params = new JSONObject(param);
+					params.put("callBackID", callbackId);
+					String toolId = params.getString("toolId");
+					params.put("callBackID", callbackId);
+					String fileName = toolId + ".jar";
+					IWebviewImpl pWebview = new IWebviewImpl(mContext, mWebView);
+					Tool tool = getTool(pWebview, mContext, fileName);
+					executeAct(pWebview, params, tool);
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-				// --------------------之后要删除-------------------------
-
-				// 工具不存在、网络可用
-				Map<String, String> map = getToolCurrentVersionIdWithController(
-						toolId, sessionId);
-				toolVersion = map.get("toolCurrentVersionID");
-				// downloadToolAndRunToolAndReturnResult(pWebview, context,
-				// fileName, CallBackID, action, toolId, pArgsArray,
-				// toolVersion, sessionId);
-			} else {
-				// 工具不存在、网络不可用
-				// returnRunToolErrorForWithoutNetwork(pWebview, CallBackID);
 			}
-		}
+			
+		}).start();
 	}
 
 	/**
@@ -251,31 +243,13 @@ public class Demo {
 	 *            文件名
 	 * @return 返回File对象
 	 */
-	@SuppressWarnings("deprecation")
 	public File getJarFile(Context context, String fileName) {
 		boolean sdCardExist = Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED); // 判断sd卡是否存在
 		File jarFile = null;
-		// if (sdCardExist) {
-		// File sdDir = Environment.getExternalStorageDirectory();// 获取手机SD卡根目录
-		// File jarDir = new File(sdDir.getPath() + File.separator
-		// + "WeToBand" + File.separator + "Jar");
-		// jarFile = new File(sdDir.getPath() + File.separator + "WeToBand"
-		// + File.separator + "Jar" + File.separator + fileName);
-		// if (!jarDir.exists()) {// SD卡文件夹是否存在，没有则创建
-		// jarDir.mkdirs();
-		// }
-		// } else {
-		// // 创建文件夹
-		// File dir = context.getDir("WeToBandJar", Context.MODE_PRIVATE
-		// | Context.MODE_WORLD_READABLE
-		// | Context.MODE_WORLD_WRITEABLE);
-		// // 新建文件
-		// jarFile = new File(dir.getPath() + File.separator + fileName);
-		// }
-
 		if (sdCardExist) {
-			File sdDir = Environment.getDataDirectory();// 获取手机SD卡根目录
+			File sdDir = context
+					.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
 			File jarDir = new File(sdDir.getPath() + File.separator + "Jar");
 			jarFile = new File(sdDir.getPath() + File.separator + "Jar"
 					+ File.separator + fileName);
@@ -283,96 +257,11 @@ public class Demo {
 				jarDir.mkdirs();
 			}
 		} else {
-			// 创建文件夹
-			File dir = context.getDir("Jar", Context.MODE_PRIVATE
-					| Context.MODE_WORLD_READABLE
-					| Context.MODE_WORLD_WRITEABLE);
-			// 新建文件
+			File dir = context.getFilesDir();
 			jarFile = new File(dir.getPath() + File.separator + fileName);
 		}
 
 		return jarFile;
-	}
-
-	public String getSessionId() {
-		InputStream is = null;
-		String[] param = null;
-		String fileUrl = Constant.url
-				+ "userLogin?username=zhuangweihao&password=123456";// 登录url
-		try {
-			URL url = new URL(fileUrl);
-			HttpURLConnection ucon = (HttpURLConnection) url.openConnection();
-			ucon.setRequestMethod("POST");
-			ucon.connect();
-			ucon.getOutputStream().flush();
-			int code = ucon.getResponseCode();
-
-			// 读取响应内容
-			String sCurrentLine = "";
-			String sTotalString = "";
-			if (code == 200) {
-				is = ucon.getInputStream();
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(is));
-				while ((sCurrentLine = reader.readLine()) != null)
-					if (sCurrentLine.length() > 0)
-						sTotalString = sTotalString + sCurrentLine.trim();
-			} else {
-				sTotalString = "远程服务器连接失败,错误代码:" + code;
-			}
-			String session_value = ucon.getHeaderField("Set-Cookie");
-			param = session_value.split(";");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (param != null) {
-			return param[0].split("=")[1];
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * @方法：getToolCurrentVersionIdWithController
-	 * @描述：调用controller，通过工具id获取工具版本信息
-	 * @param toolId
-	 *            工具id
-	 * @param sessionId
-	 *            会话id
-	 * @return 返回工具版本信息
-	 */
-	public Map<String, String> getToolCurrentVersionIdWithController(
-			String toolId, String sessionId) {
-		Map<String, String> map = null;
-		// 生成一个httpclient对象
-		HttpClient httpclient = new DefaultHttpClient();
-		String ajaxUrl = Constant.url + "getToolsByobjId?objID=" + toolId;
-		HttpGet httpget = new HttpGet(ajaxUrl);
-		httpget.addHeader(new BasicHeader("Cookie", "JSESSIONID=" + sessionId));
-		try {
-			HttpResponse response = httpclient.execute(httpget);
-			int code = response.getStatusLine().getStatusCode();
-			if (code == HttpStatus.SC_OK) {
-				String strResult = EntityUtils.toString(response.getEntity());
-				JSONObject object = new JSONObject(strResult);
-				map = new HashMap<String, String>();
-				map.put("toolCurrentVersionID",
-						object.getString("toolCurrentVersionID"));
-				map.put("tvID", object.getString("tvID"));
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} finally {
-			if (httpclient != null) {
-				// 关闭连接.
-				httpclient.getConnectionManager().shutdown();
-			}
-		}
-		return map;
 	}
 
 	/**
@@ -402,40 +291,82 @@ public class Demo {
 	}
 
 	/**
-	 * @描述：判断本地工具是否为有页面工具
+	 * 判断工具类型，并根据工具类型执行不同操作
+	 * 
 	 * @param pWebview
 	 *            webview对象
-	 * @param context
-	 *            上下文对象
+	 * @param object
+	 *            参数集合
 	 * @param fileName
-	 *            文件名
-	 * @param CallBackID
-	 *            回调Id
-	 * @param action
-	 *            调用的本地工具的action方法
+	 *            工具名称
+	 * @throws JSONException
+	 */
+	public void adjustToolTypeAndDo(final IWebview pWebview, JSONObject object,
+			String fileName) throws JSONException {
+		Context context = pWebview.getContext();
+		final String runType = object.getString("runType");
+		final String toolId = object.getString("toolId");
+		if (runType.equals("1")) {// 有页面
+			// 解压jar包
+			final File unZipPatn = getJarUnZipPath(pWebview.getContext(),
+					toolId);
+			File jarPath = getJarFile(pWebview.getContext(), fileName);
+			if (!unZipPatn.exists()) {
+				JarUtils.unJar(jarPath, unZipPatn);
+			}
+			pWebview.getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					String url = getUrl(unZipPatn.getPath(), toolId, runType);
+					pWebview.loadUrl(url);
+				}
+			});
+		} else {// 无页面
+			Tool tool = getTool(pWebview, context, fileName);
+			executeToolMain(pWebview, object, tool);
+		}
+	}
+
+	/**
+	 * 获取工具解压后，工具的main.jsp页面路径
+	 * 
+	 * @param unZipPath
+	 *            工具解压路径
 	 * @param toolId
 	 *            工具Id
-	 * @param pArgsArray
-	 *            传给工具的参数
+	 * @param runType
+	 *            工具类型
+	 * @return 返回工具解压后，工具的main.jsp页面路径
 	 */
-	public void runToolAndAdjustIfWithPages(final IWebview pWebview,
-			Context context, String fileName, String CallBackID, String action,
-			String toolId, JSONObject pArgs) {
+	public String getUrl(String unZipPath, String toolId, String runType) {
+		String url = Constant.locationUrl + unZipPath + "/main.jsp?toolId="
+				+ toolId + "&runType=" + runType;
+		return url;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@SuppressLint("NewApi")
+	public Tool getTool(IWebview pWebview, Context context, String fileName) {
+		if (ToolLoaderUtil.isContainsTool(fileName)) {
+			return ToolLoaderUtil.getTool(fileName);
+		}
 		File jarFile = getJarFile(context, fileName);// jar包File对象
 		String jarPath = jarFile.getAbsolutePath();// jar包存放全路径
-		String isWithPages = SAX(context, jarPath, "WithPages");
-		if (isWithPages == null || isWithPages.equals("0")) {
-			// 无页面工具，运行工具并返回运行结果和交换结果
-			runToolNoPageAndReturnResult(pWebview, context, fileName,
-					CallBackID, action, toolId, pArgs);
-		} else if (isWithPages != null && isWithPages.equals("1")) {
-			// 有页面工具，返回所执行工具为有页面工具结果
-			runToolWithPagesAndReturnResult(pWebview, CallBackID, fileName,
-					toolId);
-		} else {
-			// 返回withpages参数错误
-			returnToolWithPagesParamError(pWebview, CallBackID);
+		String classPathAndName = SAX(context, jarPath, "EntryClass");
+		DexClassLoader loader = ToolLoaderUtil.getToolLoader(jarPath, context,
+				context.getClassLoader());
+		Class clazz = null;
+		Tool tool = null;
+		try {
+			// 加载指定的工具插件
+			clazz = loader.loadClass(classPathAndName);
+			tool = (Tool) clazz.newInstance();
+			// 实例化该插件的类对象
+			ToolLoaderUtil.putTool(fileName, tool);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return tool;
 	}
 
 	/**
@@ -464,169 +395,190 @@ public class Demo {
 	}
 
 	/**
-	 * @方法：runToolNoPageAndReturnResult
-	 * @描述：运行工具并返回运行结果
+	 * 执行无页面工具的ToolMain方法
+	 * 
 	 * @param pWebview
 	 *            webview对象
+	 * @param object
+	 *            参数集合
+	 * @param tool
+	 *            工具类
+	 * @throws JSONException
+	 */
+	public void executeToolMain(IWebview pWebview, JSONObject object, Tool tool)
+			throws JSONException {
+		String CallBackID = object.getString("callBackID");
+		if (tool != null) {
+			tool.toolMain(pWebview, object);
+		} else {
+			returnErrorMessage(pWebview, CallBackID, 401, "加载到的工具类为null");
+		}
+	}
+	
+	/**
+	 * 执行有页面工具的act方法
+	 * 
+	 * @param pWebview
+	 *            webview对象
+	 * @param object
+	 *            参数集合
+	 * @param tool
+	 *            工具类
+	 * @throws JSONException
+	 */
+	public void executeAct(IWebview pWebview, JSONObject object, Tool tool)
+			throws JSONException {
+		String CallBackID = object.getString("callBackID");
+		if (tool != null) {
+			tool.act(pWebview, object);
+		} else {
+			returnErrorMessage(pWebview, CallBackID, 401, "加载到的工具类为null");
+		}
+	}
+
+	/**
+	 * 下载本地工具，并判断工具类型，根据工具类型执行不同操作
+	 * 
+	 * @param pWebview
+	 *            webview对象
+	 * @param object
+	 *            参数集合
+	 * @param fileName
+	 *            工具名称
+	 * @throws JSONException
+	 */
+	public void downloadToolAndAdjustToolTypeThenDo(IWebview pWebview,
+			JSONObject object, String fileName) throws JSONException {
+		Context context = pWebview.getContext();
+		String tvId = object.getString("tvId");
+		File jarFile = getJarFile(context, fileName);
+		boolean isSuccess = getToolContentByToolInfoWithController(tvId,
+				jarFile);// 下载Jar包
+		if (isSuccess) {
+			SetToolVersion(context, fileName, tvId);
+			adjustToolTypeAndDo(pWebview, object, fileName);
+		} else {
+			if (jarFile.exists()) {
+				jarFile.delete();
+			}
+		}
+	}
+
+	/**
+	 * @方法：getToolContentByToolInfoWithController
+	 * @描述：下载工具jar包
+	 * @param toolObjID
+	 *            工具objId
+	 * @param toolVersionID
+	 *            工具版本Id
+	 * @param jarFile
+	 *            工具下载存放路径
+	 * @param sessionId
+	 *            与服务器连接sessionId
+	 * @return 返回下载结果
+	 */
+	public boolean getToolContentByToolInfoWithController(String tvId,
+			File jarFile) {
+		// 生成一个httpclient对象
+		boolean result = false;
+		HttpClient httpclient = new DefaultHttpClient();
+		String ajaxUrl = Constant.SERVER_URL
+				+ "/tool/tool_download_tvId.action?tvId=" + tvId;
+		HttpGet httpget = new HttpGet(ajaxUrl);
+		InputStream in = null;
+		FileOutputStream fos = null;
+		try {
+			HttpResponse response = httpclient.execute(httpget);
+			int code = response.getStatusLine().getStatusCode();
+			if (code == HttpStatus.SC_OK) {
+				HttpEntity entity = response.getEntity();
+				fos = new FileOutputStream(jarFile);
+				if (entity != null) {
+					in = entity.getContent();
+				}
+				int l = -1;
+				byte[] tmp = new byte[1024];
+				while ((l = in.read(tmp)) != -1) {
+					fos.write(tmp, 0, l);
+				}
+				fos.flush();
+				if (entity != null) {
+					entity.consumeContent();
+				}
+				result = true;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			if (jarFile.exists()) {
+				jarFile.delete();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			if (jarFile.exists()) {
+				jarFile.delete();
+			}
+		} finally {
+			// 关闭低层流。
+			try {
+				if (in != null) {
+					in.close();
+				}
+				if (httpclient != null) {
+					// 关闭连接.
+					httpclient.getConnectionManager().shutdown();
+				}
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @方法名：SetToolVersion
 	 * @param context
-	 *            context上下文
+	 *            上下文对象
 	 * @param fileName
 	 *            文件名称
-	 * @param CallBackID
-	 *            返回结果回调方法id
-	 * @param action
-	 *            调用插件的action方法
-	 * @param toolId
-	 *            工具id
-	 * @param pArgsArray
-	 *            要传给工具的参数
+	 * @param toolVersion
+	 *            工具版本
 	 */
-	public void runToolNoPageAndReturnResult(final IWebview pWebview,
-			Context context, String fileName, String CallBackID, String action,
-			String toolId, JSONObject pArgs) {
-		IFeature lib = runPlugin(context, fileName);
-		if (lib != null) {
-			// 返回运行成功结果
-			returnRunSuccessResult(pWebview, CallBackID);
-			// 调用该插件的excute方式执行本地工具操作并返回交换结果
-			lib.execute(pWebview, action, CallBackID, pArgs);
-		} else {
-			// 加载jar包插件类失败、返回工具运行失败标志
-			removeToolVersion(context, fileName);// 删除本地的工具版本信息
-			deleteDexFile(context, toolId);// 删除该本地工具解压后的Dex文件
-			deleteJarFile(context, fileName);// 删除该本地工具的jar包
-			deleteJarUnZipPath(context, toolId);// 删除本地jar包解压文件
-			returnRunErrorResult(pWebview, CallBackID);// 返回加载失败结果
+	public void SetToolVersion(Context context, String fileName,
+			String toolVersion) {
+		if (fileName.equals("") || fileName == null || toolVersion == null
+				|| toolVersion.equals("")) {
+			return;
 		}
-	}
-
-	/**
-	 * @方法名：runPlugin
-	 * @描述：动态加载jar包，并运行插件方法
-	 * @param pWebview
-	 *            WebView对象
-	 * @param context
-	 *            Context上下文对象
-	 * @param fileName
-	 *            文件名
-	 * @param action
-	 *            要执行插件的具体action操作
-	 * @param pArgs
-	 *            传递到插件中的参数
-	 * @return 返回调用插件后获取到的数据
-	 */
-	@SuppressWarnings({ "rawtypes" })
-	@SuppressLint("NewApi")
-	public IFeature runPlugin(Context context, String fileName) {
-		if (ClassLoaderUtil.isContainsClazz(fileName)) {
-			return ClassLoaderUtil.getClazz(fileName);
-		}
-		File jarFile = getJarFile(context, fileName);// jar包File对象
-		String jarPath = jarFile.getAbsolutePath();// jar包存放全路径
-		String packagePathAndName = SAX(context, jarPath, "EntryClass");
-		DexClassLoader clazz = DLClassLoader.getClassLoader(jarPath, context,
-				context.getClassLoader());
-		Class libProviderClazz = null;
-		try {
-			// 加载指定的工具插件
-			libProviderClazz = clazz.loadClass(packagePathAndName);
-			IFeature lib = (IFeature) libProviderClazz.newInstance();
-			// 实例化该插件的类对象
-			ClassLoaderUtil.putClazz(fileName, lib);
-			return lib;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/**
-	 * @方法：returnRunSuccessResult
-	 * @描述：返回加载运行工具类成功结果
-	 * @param pWebview
-	 *            webview对象
-	 * @param CallBackID
-	 *            回调方法id
-	 */
-	public void returnRunSuccessResult(final IWebview pWebview,
-			String CallBackID) {
-		// 加载jar包插件类成功、先返回工具运行结果
-		JSONObject retJSONObj = null;
-		try {
-			retJSONObj = new JSONObject();// 返回结果到前端用
-			retJSONObj.putOpt("code", "200");
-			retJSONObj.putOpt("content", "runTool success");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		JSUtil.execCallback(pWebview, CallBackID, retJSONObj.toString(),
-				JSUtil.OK, JSUtil.CONTINUED);
-	}
-
-	/**
-	 * @方法：removeToolVersion
-	 * @描述：移除工具的版本信息
-	 * @param context
-	 *            context上下文对象
-	 * @param fileName
-	 *            文件名
-	 */
-	public void removeToolVersion(Context context, String fileName) {
 		SharedPreferences sp = context.getSharedPreferences(
 				"toolVersionStorage", Context.MODE_PRIVATE);
 		Editor editor = sp.edit();
-		editor.remove(fileName);
+		editor.putString(fileName, toolVersion);
 		editor.commit();// 提交修改
 	}
 
 	/**
-	 * @方法名：deleteDexFile
-	 * @描述：更新工具版本的时候删除dex文件
-	 * @param context
-	 *            Context上下文对象
-	 * @param toolId
-	 *            工具Id
+	 * 回调js端Error方法，并返回结果
+	 * 
+	 * @param pWebview
+	 *            webview对象
+	 * @param CallBackID
+	 *            回调Id
+	 * @param code
+	 *            返回code值
+	 * @param content
+	 *            返回内容
+	 * @throws JSONException
 	 */
-	@SuppressWarnings("deprecation")
-	public void deleteDexFile(Context context, String toolId) {
-		String fileName = toolId + ".dex";
-		// 创建文件夹
-		File dir = context.getDir("Dex", Context.MODE_PRIVATE
-				| Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE);
-		// 新建文件
-		File dexFile = new File(dir.getPath() + File.separator + fileName);
-		if (dexFile.exists()) {
-			dexFile.delete();
-		}
-	}
-
-	/**
-	 * @方法：deleteJarFile
-	 * @描述：删除jar包文件
-	 * @param context
-	 *            context上下文对象
-	 * @param fileName
-	 *            文件名称
-	 */
-	public void deleteJarFile(Context context, String fileName) {
-		File jarFile = getJarFile(context, fileName);// jar包File对象
-		if (jarFile.exists()) {
-			jarFile.delete();
-		}
-	}
-
-	/**
-	 * @描述：删除jar包解压文件
-	 * @param context
-	 *            上下文对象
-	 * @param toolId
-	 *            工具Id
-	 */
-	public void deleteJarUnZipPath(Context context, String toolId) {
-		File jarPath = getJarUnZipPath(context, toolId);
-		if (jarPath.exists()) {
-			recurDelete(jarPath);
-		}
+	public void returnErrorMessage(IWebview pWebview, String CallBackID,
+			int code, String content) throws JSONException {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("code", code);
+		jsonObject.put("content", content);
+		JSUtil.execCallback(pWebview, CallBackID, jsonObject.toString(),
+				JSUtil.ERROR, JSUtil.UNCONTINUED);
 	}
 
 	/**
@@ -637,119 +589,24 @@ public class Demo {
 	 *            工具Id
 	 * @return 返回文件夹对象
 	 */
-	@SuppressWarnings("deprecation")
 	public File getJarUnZipPath(Context context, String toolId) {
 		boolean sdCardExist = Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED); // 判断sd卡是否存在
-		File jarFile = null;
+		File unZipPath = null;
 		if (sdCardExist) {
-			File sdDir = Environment.getDataDirectory();// 获取手机SD卡根目录
-			File jarDir = new File(sdDir.getPath() + File.separator
+			File sdDir = context
+					.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+			File unZipRoot = new File(sdDir.getPath() + File.separator
 					+ "JarUnZip");
-			jarFile = new File(sdDir.getPath() + File.separator + "JarUnZip"
+			unZipPath = new File(sdDir.getPath() + File.separator + "JarUnZip"
 					+ File.separator + toolId);
-			if (!jarDir.exists()) {// SD卡文件夹是否存在，没有则创建
-				jarDir.mkdirs();
+			if (!unZipRoot.exists()) {// SD卡文件夹是否存在，没有则创建
+				unZipRoot.mkdirs();
 			}
 		} else {
-			// 创建文件夹
-			File dir = context.getDir("JarUnZip", Context.MODE_PRIVATE
-					| Context.MODE_WORLD_READABLE
-					| Context.MODE_WORLD_WRITEABLE);
-			// 新建文件
-			jarFile = new File(dir.getPath() + File.separator + toolId);
+			File dir = context.getFilesDir();
+			unZipPath = new File(dir.getPath() + File.separator + toolId);
 		}
-		return jarFile;
+		return unZipPath;
 	}
-
-	/**
-	 * @描述：递归删除jar包解压文件目录
-	 * @param f
-	 *            文件对象
-	 */
-	public void recurDelete(File f) {
-		for (File fi : f.listFiles()) {
-			if (fi.isDirectory()) {
-				recurDelete(fi);
-			} else {
-				fi.delete();
-			}
-		}
-		f.delete();
-	}
-
-	/**
-	 * @方法：returnRunErrorResult
-	 * @描述：返回加载运行工具类失败结果
-	 * @param pWebview
-	 *            webview对象
-	 * @param CallBackID
-	 *            回调方法的id
-	 */
-	public void returnRunErrorResult(final IWebview pWebview, String CallBackID) {
-		JSONObject retJSONObj = null;
-		try {
-			retJSONObj = new JSONObject();// 返回结果到前端用
-			retJSONObj.putOpt("code", "500");
-			retJSONObj.putOpt("content", "loadclass error!");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		JSUtil.execCallback(pWebview, CallBackID, retJSONObj.toString(),
-				JSUtil.ERROR, JSUtil.UNCONTINUED);
-	}
-
-	/**
-	 * @描述：运行工具时，判断为有页面工具，返回结果
-	 * @param pWebview
-	 *            webview对象
-	 * @param CallBackID
-	 *            回调Id
-	 */
-	public void runToolWithPagesAndReturnResult(final IWebview pWebview,
-			String CallBackID, String fileName, String toolId) {
-		Context context = pWebview.getContext();
-		Activity activity = pWebview.getActivity();
-		// 解压jar包
-		File releasePath = getJarUnZipPath(context, toolId);
-		File jarPath = getJarFile(pWebview.getContext(), fileName);
-		if (!releasePath.exists()) {
-			JarUtils.unJar(jarPath, releasePath);
-		}
-
-		// 返回结果
-		JSONObject retJSONObj = null;
-		try {
-			retJSONObj = new JSONObject();// 返回结果到前端用
-			retJSONObj.putOpt("type", "runToolResult");
-			retJSONObj.putOpt("result", "isWithPagesTool");
-			retJSONObj.putOpt("filePath", releasePath.getParent());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		JSUtil.execCallback(pWebview, CallBackID, retJSONObj.toString(),
-				JSUtil.OK, JSUtil.CONTINUED);
-	}
-
-	/**
-	 * @描述：config.xml文件中的withpages参数填写格式错误，返回结果
-	 * @param pWebview
-	 *            webview对象
-	 * @param CallBackID
-	 *            回调id
-	 */
-	public void returnToolWithPagesParamError(final IWebview pWebview,
-			String CallBackID) {
-		JSONObject retJSONObj = null;
-		try {
-			retJSONObj = new JSONObject();// 返回结果到前端用
-			retJSONObj.putOpt("code", "501");
-			retJSONObj.putOpt("content", "WithPages param type error");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		JSUtil.execCallback(pWebview, CallBackID, retJSONObj.toString(),
-				JSUtil.ERROR, JSUtil.UNCONTINUED);
-	}
-
 }

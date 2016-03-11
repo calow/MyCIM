@@ -64,7 +64,13 @@
         
         <activity
             android:name="com.example.testwebview.WebviewActivity"
-            android:theme="@android:style/Theme.Light.NoTitleBar" />
+            android:theme="@style/ThemeActivity"
+            android:launchMode="singleInstance" />
+        
+        <activity
+            android:name="com.example.cim.ui.ToolActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:launchMode="singleInstance" />
 
         <!-- 推送服务 -->
         <service

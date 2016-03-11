@@ -10,15 +10,10 @@
         android:layout_alignParentTop="true" />
 
     <FrameLayout
-        android:id="@+id/fl_main"
+        android:id="@+id/fl_webview_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/title_bar" >
-
-        <WebView
-            android:id="@+id/my_webview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
     </FrameLayout>
 
 </RelativeLayout>

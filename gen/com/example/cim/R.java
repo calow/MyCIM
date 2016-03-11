@@ -646,20 +646,21 @@ containing a value of this type.
         public static final int terminal_icon_mobile=0x7f0200f2;
         public static final int terminal_icon_pc=0x7f0200f3;
         public static final int title_bar_bg_one_row=0x7f0200f4;
-        public static final int top_back_left_selector=0x7f0200f5;
-        public static final int userhead1=0x7f0200f6;
-        public static final int userhead2=0x7f0200f7;
-        public static final int voice_rcd_btn_nor=0x7f0200f8;
-        public static final int voice_rcd_btn_pressed=0x7f0200f9;
-        public static final int wangyi=0x7f0200fa;
-        public static final int xinlang=0x7f0200fb;
+        public static final int tool=0x7f0200f5;
+        public static final int top_back_left_selector=0x7f0200f6;
+        public static final int userhead1=0x7f0200f7;
+        public static final int userhead2=0x7f0200f8;
+        public static final int voice_rcd_btn_nor=0x7f0200f9;
+        public static final int voice_rcd_btn_pressed=0x7f0200fa;
+        public static final int wangyi=0x7f0200fb;
+        public static final int xinlang=0x7f0200fc;
     }
     public static final class id {
         public static final int ChatRelativeLayout=0x7f0a0023;
-        public static final int TITLE_TEXT=0x7f0a008a;
-        public static final int TOP_BACK_BUTTON=0x7f0a0089;
+        public static final int TITLE_TEXT=0x7f0a008d;
+        public static final int TOP_BACK_BUTTON=0x7f0a008c;
         public static final int account=0x7f0a0008;
-        public static final int action_settings=0x7f0a009c;
+        public static final int action_settings=0x7f0a00a0;
         public static final int app_cancle=0x7f0a0022;
         public static final int app_change_user=0x7f0a0020;
         public static final int app_exit=0x7f0a0021;
@@ -674,7 +675,7 @@ containing a value of this type.
         public static final int buttom_news=0x7f0a000e;
         public static final int buttom_setting=0x7f0a0011;
         public static final int callListView=0x7f0a007a;
-        public static final int catalog=0x7f0a0086;
+        public static final int catalog=0x7f0a0087;
         public static final int chat_list=0x7f0a001d;
         public static final int child_fragment=0x7f0a007b;
         public static final int ck_agreen=0x7f0a0018;
@@ -682,34 +683,35 @@ containing a value of this type.
         public static final int constact_all=0x7f0a0047;
         public static final int contact_group=0x7f0a0046;
         public static final int contact_list_item_name=0x7f0a0050;
-        public static final int country_lvcountry=0x7f0a0083;
+        public static final int country_lvcountry=0x7f0a0084;
         public static final int cpntact_list_item_state=0x7f0a0051;
-        public static final int dialog=0x7f0a0084;
+        public static final int dialog=0x7f0a0085;
         public static final int dynamic=0x7f0a0057;
         public static final int et_message=0x7f0a0027;
         public static final int et_phoneNumber=0x7f0a0016;
         public static final int feeds=0x7f0a0059;
         public static final int file=0x7f0a0061;
-        public static final int filter_edit=0x7f0a0082;
+        public static final int filter_edit=0x7f0a0083;
         public static final int fl_content=0x7f0a0013;
         public static final int fl_main=0x7f0a009a;
+        public static final int fl_webview_activity=0x7f0a009f;
         public static final int game=0x7f0a005d;
         public static final int group_indicator=0x7f0a0054;
         public static final int group_item_layout=0x7f0a0053;
         public static final int group_name=0x7f0a0056;
-        public static final int head_arrowImageView=0x7f0a0093;
-        public static final int head_contentLayout=0x7f0a0092;
-        public static final int head_lastUpdatedTextView=0x7f0a0096;
-        public static final int head_progressBar=0x7f0a0094;
-        public static final int head_tipsTextView=0x7f0a0095;
+        public static final int head_arrowImageView=0x7f0a0096;
+        public static final int head_contentLayout=0x7f0a0095;
+        public static final int head_lastUpdatedTextView=0x7f0a0099;
+        public static final int head_progressBar=0x7f0a0097;
+        public static final int head_tipsTextView=0x7f0a0098;
         public static final int header=0x7f0a001c;
         public static final int huodong=0x7f0a005f;
         public static final int ib_face=0x7f0a0025;
         public static final int icon=0x7f0a004e;
-        public static final int id_indicator=0x7f0a0097;
-        public static final int id_vp=0x7f0a0098;
+        public static final int id_indicator=0x7f0a009c;
+        public static final int id_vp=0x7f0a009d;
         public static final int iphone_tree_view=0x7f0a004c;
-        public static final int item_iv_face=0x7f0a0088;
+        public static final int item_iv_face=0x7f0a008b;
         public static final int iv_call=0x7f0a003d;
         public static final int iv_discuss=0x7f0a003a;
         public static final int iv_friend=0x7f0a0034;
@@ -723,7 +725,7 @@ containing a value of this type.
         public static final int listview=0x7f0a004b;
         public static final int ll_bottom=0x7f0a0001;
         public static final int ll_center=0x7f0a0032;
-        public static final int ll_constact=0x7f0a0087;
+        public static final int ll_constact=0x7f0a0088;
         public static final int ll_constact_search=0x7f0a0031;
         public static final int ll_dynamic=0x7f0a006e;
         public static final int ll_exit=0x7f0a001f;
@@ -733,15 +735,17 @@ containing a value of this type.
         public static final int ll_news_search=0x7f0a003b;
         public static final int ll_phone=0x7f0a0015;
         public static final int ll_user_info=0x7f0a0007;
-        public static final int load_more=0x7f0a0091;
+        public static final int load_more=0x7f0a0094;
         public static final int loading=0x7f0a0041;
         public static final int loadingView=0x7f0a004d;
         public static final int login=0x7f0a000a;
         public static final int login_picture=0x7f0a0005;
         public static final int lv_chat=0x7f0a0003;
         public static final int lv_news=0x7f0a0079;
-        public static final int menuTitle=0x7f0a008b;
-        public static final int my_webview=0x7f0a009b;
+        public static final int lv_tools=0x7f0a0082;
+        public static final int menuTitle=0x7f0a008e;
+        public static final int my_tool_webview=0x7f0a009b;
+        public static final int my_webview=0x7f0a008a;
         public static final int myfeeds=0x7f0a0065;
         public static final int name=0x7f0a001a;
         public static final int neighbour=0x7f0a0063;
@@ -752,7 +756,7 @@ containing a value of this type.
         public static final int pop_chat=0x7f0a007e;
         public static final int pop_sangzhao=0x7f0a007f;
         public static final int pop_scan=0x7f0a0081;
-        public static final int pull_to_refresh_progress=0x7f0a0090;
+        public static final int pull_to_refresh_progress=0x7f0a0093;
         public static final int qianbao=0x7f0a0072;
         public static final int register=0x7f0a000c;
         public static final int register_complete=0x7f0a001b;
@@ -775,23 +779,24 @@ containing a value of this type.
         public static final int rl_user=0x7f0a0006;
         public static final int rl_userpic=0x7f0a006f;
         public static final int rl_wangyi=0x7f0a0066;
-        public static final int rl_wenview=0x7f0a0099;
+        public static final int rl_wenview=0x7f0a009e;
         public static final int rl_xinlang=0x7f0a005e;
         public static final int saosao=0x7f0a0067;
         public static final int search=0x7f0a0049;
         public static final int setting=0x7f0a0077;
         public static final int shoucang=0x7f0a0073;
-        public static final int sidebar=0x7f0a0085;
+        public static final int sidebar=0x7f0a0086;
         public static final int stateicon=0x7f0a004f;
         public static final int three=0x7f0a0075;
-        public static final int tileOne=0x7f0a008c;
-        public static final int tileTwo=0x7f0a008d;
+        public static final int tileOne=0x7f0a008f;
+        public static final int tileTwo=0x7f0a0090;
         public static final int title=0x7f0a0014;
-        public static final int titleThree=0x7f0a008e;
+        public static final int titleThree=0x7f0a0091;
         public static final int title_bar=0x7f0a0002;
         public static final int title_btn_left=0x7f0a0042;
         public static final int title_btn_right=0x7f0a0044;
         public static final int title_txt=0x7f0a0043;
+        public static final int tool_fragment=0x7f0a0089;
         public static final int tv=0x7f0a004a;
         public static final int tv_call1=0x7f0a003e;
         public static final int tv_call2=0x7f0a003f;
@@ -808,7 +813,7 @@ containing a value of this type.
         public static final int user_name=0x7f0a006c;
         public static final int user_picture=0x7f0a0069;
         public static final int user_time=0x7f0a006a;
-        public static final int viewPager=0x7f0a008f;
+        public static final int viewPager=0x7f0a0092;
         public static final int vp_contains=0x7f0a0029;
         public static final int welcome_img=0x7f0a001e;
         public static final int xiangce=0x7f0a0074;
@@ -850,15 +855,20 @@ containing a value of this type.
         public static final int fragment_news_cim_item=0x7f030021;
         public static final int fragment_news_father=0x7f030022;
         public static final int fragment_news_pop=0x7f030023;
-        public static final int fragment_phone_constact=0x7f030024;
-        public static final int fragment_phone_constacts_item=0x7f030025;
-        public static final int item_face=0x7f030026;
-        public static final int layout_global_top_header=0x7f030027;
-        public static final int main=0x7f030028;
-        public static final int refresh_footer=0x7f030029;
-        public static final int refresh_head=0x7f03002a;
-        public static final int vp_indicator=0x7f03002b;
-        public static final int webview_activity=0x7f03002c;
+        public static final int fragment_pctoollist=0x7f030024;
+        public static final int fragment_phone_constact=0x7f030025;
+        public static final int fragment_phone_constacts_item=0x7f030026;
+        public static final int fragment_phonetoollist=0x7f030027;
+        public static final int fragment_tool_father=0x7f030028;
+        public static final int fragment_webview=0x7f030029;
+        public static final int item_face=0x7f03002a;
+        public static final int layout_global_top_header=0x7f03002b;
+        public static final int main=0x7f03002c;
+        public static final int refresh_footer=0x7f03002d;
+        public static final int refresh_head=0x7f03002e;
+        public static final int tool_activity=0x7f03002f;
+        public static final int vp_indicator=0x7f030030;
+        public static final int webview_activity=0x7f030031;
     }
     public static final class menu {
         public static final int main=0x7f090000;
@@ -871,57 +881,59 @@ containing a value of this type.
         public static final int app_exit_user=0x7f07000b;
         public static final int app_name=0x7f070000;
         public static final int back=0x7f070013;
-        public static final int baidu_sring=0x7f070046;
+        public static final int baidu_sring=0x7f070048;
         public static final int btn_call=0x7f070022;
         public static final int btn_next=0x7f070010;
         public static final int call=0x7f070031;
         public static final int choose_constact=0x7f070023;
         public static final int cnews=0x7f070030;
         public static final int control=0x7f07001a;
-        public static final int dynamic=0x7f07004c;
+        public static final int dynamic=0x7f07004e;
         public static final int et_account_hint=0x7f070005;
         public static final int et_name_hint=0x7f070016;
         public static final int et_password_hint=0x7f070006;
         public static final int et_phoneNumber_hint=0x7f07000e;
-        public static final int fenghuang_string=0x7f07004a;
+        public static final int fenghuang_string=0x7f07004c;
         public static final int forget_password=0x7f070008;
         public static final int friend_group=0x7f070019;
         public static final int group=0x7f07002e;
         public static final int hello_world=0x7f070002;
-        public static final int local_plugin=0x7f070045;
+        public static final int local_plugin=0x7f070047;
         public static final int login=0x7f070007;
         public static final int menu1=0x7f07002b;
         public static final int menu2=0x7f07002c;
         public static final int menu3=0x7f07002d;
         public static final int no_data=0x7f07001f;
-        public static final int p2refresh_doing_end_refresh=0x7f070039;
-        public static final int p2refresh_doing_head_refresh=0x7f07003d;
-        public static final int p2refresh_end_click_load_more=0x7f07003a;
-        public static final int p2refresh_end_load_more=0x7f07003b;
-        public static final int p2refresh_head_load_more=0x7f070038;
-        public static final int p2refresh_pull_to_refresh=0x7f07003c;
-        public static final int p2refresh_refresh_lasttime=0x7f070037;
-        public static final int p2refresh_release_refresh=0x7f070036;
-        public static final int password=0x7f070050;
-        public static final int pop_camera=0x7f070034;
-        public static final int pop_chat=0x7f070032;
-        public static final int pop_sangzhao=0x7f070033;
-        public static final int pop_scan=0x7f070035;
+        public static final int p2refresh_doing_end_refresh=0x7f07003b;
+        public static final int p2refresh_doing_head_refresh=0x7f07003f;
+        public static final int p2refresh_end_click_load_more=0x7f07003c;
+        public static final int p2refresh_end_load_more=0x7f07003d;
+        public static final int p2refresh_head_load_more=0x7f07003a;
+        public static final int p2refresh_pull_to_refresh=0x7f07003e;
+        public static final int p2refresh_refresh_lasttime=0x7f070039;
+        public static final int p2refresh_release_refresh=0x7f070038;
+        public static final int password=0x7f070052;
+        public static final int pc_side=0x7f070032;
+        public static final int pop_camera=0x7f070036;
+        public static final int pop_chat=0x7f070034;
+        public static final int pop_sangzhao=0x7f070035;
+        public static final int pop_scan=0x7f070037;
         public static final int recentchat=0x7f070028;
         public static final int register=0x7f070009;
         public static final int register_complete=0x7f070017;
         public static final int search=0x7f070029;
-        public static final int sendMessage=0x7f07004e;
-        public static final int setting=0x7f07004d;
-        public static final int souhu_string=0x7f070049;
-        public static final int tencent_string=0x7f070048;
-        public static final int title1=0x7f07003e;
-        public static final int title2=0x7f07003f;
-        public static final int title3=0x7f070040;
-        public static final int title4=0x7f070041;
-        public static final int title5=0x7f070042;
-        public static final int title6=0x7f070043;
-        public static final int title7=0x7f070044;
+        public static final int sendMessage=0x7f070050;
+        public static final int setting=0x7f07004f;
+        public static final int souhu_string=0x7f07004b;
+        public static final int tencent_string=0x7f07004a;
+        public static final int terminal_side=0x7f070033;
+        public static final int title1=0x7f070040;
+        public static final int title2=0x7f070041;
+        public static final int title3=0x7f070042;
+        public static final int title4=0x7f070043;
+        public static final int title5=0x7f070044;
+        public static final int title6=0x7f070045;
+        public static final int title7=0x7f070046;
         public static final int title_phoneNumber=0x7f07000f;
         public static final int title_register_info=0x7f070018;
         public static final int top_title=0x7f070003;
@@ -938,13 +950,13 @@ containing a value of this type.
         public static final int tv_tips_password=0x7f070014;
         public static final int tv_xieyi=0x7f070011;
         public static final int tv_xieyi_url=0x7f070012;
-        public static final int userNameText=0x7f07004f;
+        public static final int userNameText=0x7f070051;
         public static final int user_account=0x7f070004;
         public static final int user_content=0x7f07001d;
         public static final int user_name=0x7f07001c;
         public static final int user_time=0x7f07001b;
-        public static final int wangyi_string=0x7f07004b;
-        public static final int xinlang_string=0x7f070047;
+        public static final int wangyi_string=0x7f07004d;
+        public static final int xinlang_string=0x7f070049;
     }
     public static final class style {
         public static final int AnimationActivity=0x7f080004;
@@ -955,11 +967,15 @@ containing a value of this type.
 
 
 
+
+
     
 
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
+
+
 
 
 
@@ -982,17 +998,18 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f080001;
-        public static final int ButtomBar=0x7f080006;
-        public static final int ButtomBarImgBtn=0x7f080007;
+        public static final int ButtomBar=0x7f080007;
+        public static final int ButtomBarImgBtn=0x7f080008;
         public static final int GlobeEditText=0x7f080002;
         public static final int GlobeTextView=0x7f080003;
-        public static final int GlobeTheme=0x7f080005;
-        public static final int app_pop=0x7f080008;
-        public static final int chat_content_date_style=0x7f08000d;
-        public static final int chat_text_date_style=0x7f08000c;
-        public static final int popwin_anim_style=0x7f08000b;
-        public static final int top_all=0x7f08000a;
-        public static final int top_group=0x7f080009;
+        public static final int GlobeTheme=0x7f080006;
+        public static final int ThemeActivity=0x7f080005;
+        public static final int app_pop=0x7f080009;
+        public static final int chat_content_date_style=0x7f08000e;
+        public static final int chat_text_date_style=0x7f08000d;
+        public static final int popwin_anim_style=0x7f08000c;
+        public static final int top_all=0x7f08000b;
+        public static final int top_group=0x7f08000a;
     }
     public static final class styleable {
         /** Attributes that can be used with a ViewPagerIndicator.

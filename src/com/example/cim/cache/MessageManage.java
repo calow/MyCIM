@@ -2,14 +2,14 @@ package com.example.cim.cache;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+
+import net.sqlcipher.Cursor;
+import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.sqlcipher.Cursor;
-import net.sqlcipher.database.SQLiteDatabase;
 import android.content.ContentValues;
 import android.content.Context;
 
@@ -80,6 +80,7 @@ public class MessageManage {
 								jsonObject2.getString("groupName"));
 						value.put("M_Statu", jsonObject2.getInt("statu"));
 						value.put("M_UserID", userAccount);
+						value.put("M_JSon", jsonObject2.getInt("json"));
 						DBManager.getInstance(mContext)
 								.insert(MyDatabaseHelper.TABLE_MESSAGE, value,
 										database);
@@ -92,7 +93,7 @@ public class MessageManage {
 		}
 	}
 
-	public List<ChatMsgEntity> getMessageListByGroupId(String groupId,
+	public ArrayList<ChatMsgEntity> getMessageListByGroupId(String groupId,
 			String userAccount, SQLiteDatabase database) {
 		String[] columns = { "M_FromUserName", "M_FromUserID", "M_Content",
 				"M_ResourceID", "M_CreateTime", "M_Statu", "M_ID" };
@@ -102,7 +103,7 @@ public class MessageManage {
 		Cursor cursor = DBManager.getInstance(mContext).select(
 				MyDatabaseHelper.TABLE_MESSAGE, columns, selection,
 				selectionArgs, null, null, orderBy, database);
-		List<ChatMsgEntity> list = new ArrayList<ChatMsgEntity>();
+		ArrayList<ChatMsgEntity> list = new ArrayList<ChatMsgEntity>();
 		if (cursor != null) {
 			while (cursor.moveToNext()) {
 				ChatMsgEntity entity = new ChatMsgEntity();

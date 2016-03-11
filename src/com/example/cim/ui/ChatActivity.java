@@ -6,16 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.sqlcipher.database.SQLiteDatabase;
-import android.R.integer;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,13 +23,11 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.cim.R;
 import com.example.cim.adapter.ChatMsgAdapter;
 import com.example.cim.cache.DBManager;
-import com.example.cim.cache.MessageListManage;
 import com.example.cim.cache.MessageManage;
 import com.example.cim.manager.CIMPushManager;
 import com.example.cim.model.ChatMsgEntity;
@@ -79,6 +75,8 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 	public int groupType;
 
 	public String groupName;
+	
+	public String faceToUserId;
 
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
@@ -87,11 +85,8 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case UPDATE_CHAACTIVITY:
-				List<ChatMsgEntity> list = MessageManage.getInstance(
-						ChatActivity.this).getMessageListByGroupId(
-						id,
-						CIMDataConfig.getString(ChatActivity.this,
-								CIMDataConfig.KEY_ACCOUNT), null);// 获取并更新
+				Bundle bundle = msg.getData();
+				ArrayList<ChatMsgEntity> list = bundle.getParcelableArrayList("list");
 				mDataArrays.clear();
 				mDataArrays.addAll(list);
 				mAdapter.notifyDataSetChanged();
@@ -128,6 +123,7 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 			userName = intent.getStringExtra("userName");
 			groupType = intent.getIntExtra("groupType", 0);
 			groupName = intent.getStringExtra("groupName");
+			faceToUserId = intent.getStringExtra("faceToUserId");
 		}
 		// 初始化title
 		mTitleBarView.setCommonTitle(View.VISIBLE, View.VISIBLE, View.GONE,
@@ -153,7 +149,6 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 		mDataArrays.addAll(list);
 		mAdapter = new ChatMsgAdapter(mDataArrays, this);
 		mListView.setAdapter(mAdapter);
-
 		new AsyncGetGroupMessage().execute(0);
 	}
 
@@ -269,6 +264,12 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 		value.put("M_Statu", -1);
 		value.put("M_UserID", CIMDataConfig.getString(ChatActivity.this,
 				CIMDataConfig.KEY_ACCOUNT));
+		if(groupType == 1){//私聊室
+			value.put("M_JSon", faceToUserId + ":" + CIMDataConfig.getString(ChatActivity.this,
+					CIMDataConfig.KEY_ACCOUNT));
+		}else if(groupType == 2){//群聊室
+			value.put("M_JSon", "1");
+		}
 		long result = MessageManage.getInstance(ChatActivity.this)
 				.saveSendingMessage(value, database);
 		return result;
@@ -377,7 +378,15 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 	 * 更新互动室
 	 */
 	public void updateChatActivity() {
+		ArrayList<ChatMsgEntity> list = MessageManage.getInstance(
+				ChatActivity.this).getMessageListByGroupId(
+				id,
+				CIMDataConfig.getString(ChatActivity.this,
+						CIMDataConfig.KEY_ACCOUNT), null);// 获取并更新
+		Bundle b = new Bundle();
+		b.putParcelableArrayList("list", list);
 		Message message = new Message();
+		message.setData(b);
 		message.what = UPDATE_CHAACTIVITY;
 		mHandler.sendMessage(message);
 	}

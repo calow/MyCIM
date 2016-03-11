@@ -92,7 +92,6 @@ public class LoginActivity extends CIMMonitorActivity {
 			@Override
 			public void onResponseSuccess(String json) {
 				hideProgressDialog();
-				LogUtils.e("LoginActivity", json);
 				JSONObject jsonObject = null;
 				String code = null;
 				try {
@@ -127,7 +126,7 @@ public class LoginActivity extends CIMMonitorActivity {
 			@Override
 			public void onRequestException(Exception e) {
 				hideProgressDialog();
-				LogUtils.e("LoginActivity", e.toString());
+				showToast("µÇÂ¼³ö´í:" + e);
 			}
 		});
 		request.httpPost(API.UserLogin_URL, user);

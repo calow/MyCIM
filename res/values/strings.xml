@@ -58,6 +58,9 @@
     <string name="cnews">消息</string>
     <string name="call">通话</string>
     
+    <string name="pc_side">PC</string>
+    <string name="terminal_side">终端</string>
+    
     <string name="pop_chat">多人聊天</string>
     <string name="pop_sangzhao">分享</string>
     <string name="pop_camera">水印相机</string>

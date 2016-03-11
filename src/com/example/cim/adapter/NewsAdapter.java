@@ -6,13 +6,11 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.ref.SoftReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import libcore.io.DiskLruCache;
@@ -32,11 +30,7 @@ import com.example.cim.R;
 import com.example.cim.cache.DiskLruCacheManager;
 import com.example.cim.cache.LruCacheManager;
 import com.example.cim.model.RecentChat;
-import com.example.cim.network.API;
 import com.example.cim.util.DateUtil;
-import com.example.cim.util.ImgUtil;
-import com.example.cim.util.ImgUtil.OnLoadBitmapListener;
-import com.example.cim.util.SystemMethod;
 import com.example.cim.view.CustomListView;
 
 public class NewsAdapter extends BaseAdapter {
@@ -45,8 +39,6 @@ public class NewsAdapter extends BaseAdapter {
 	private Context mContext;
 	private List<RecentChat> lists;
 	private CustomListView mCustomListView;
-
-	private HashMap<String, SoftReference<Bitmap>> hashMaps = new HashMap<String, SoftReference<Bitmap>>();
 
 	public NewsAdapter(Context context, List<RecentChat> lists,
 			CustomListView customListView) {

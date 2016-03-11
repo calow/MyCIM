@@ -30,4 +30,9 @@ public class IWebviewImpl implements IWebview {
 		return mWebView;
 	}
 
+	@Override
+	public void loadUrl(String url) {
+		mWebView.loadUrl(url);
+	}
+
 }

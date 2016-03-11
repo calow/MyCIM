@@ -5,6 +5,7 @@ import com.example.cim.ui.ChatActivity;
 import com.example.cim.view.TitleBarView;
 import com.example.testwebview.WebviewActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -105,5 +106,7 @@ public class DynamicFragment extends Fragment implements OnClickListener {
 		intent.putExtra("title", title);
 		intent.putExtra("url", url);
 		mContext.startActivity(intent);
+		Activity activity = (Activity)mContext;
+		activity.overridePendingTransition(R.anim.activity_new, R.anim.activity_out);
 	}
 }

@@ -1,6 +1,9 @@
 package com.example.cim.model;
 
-public class RecentChat {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class RecentChat implements Parcelable {
 	private String userName;
 	private String userFeel;
 	private String userTime;
@@ -11,10 +14,11 @@ public class RecentChat {
 	private int groupType;
 	private String groupName;
 	private int count;
+	private String faceToUserId;
 
 	public RecentChat(String userName, String userFeel, String userTime,
 			String imgPath, String statu, String groupId, String userId,
-			int groupType, String groupName, int count) {
+			int groupType, String groupName, int count, String faceToUserId) {
 		super();
 		this.userName = userName;
 		this.userFeel = userFeel;
@@ -26,6 +30,7 @@ public class RecentChat {
 		this.groupType = groupType;
 		this.groupName = groupName;
 		this.count = count;
+		this.faceToUserId = faceToUserId;
 	}
 
 	public RecentChat() {
@@ -109,6 +114,63 @@ public class RecentChat {
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+
+	public String getFaceToUserId() {
+		return faceToUserId;
+	}
+
+	public void setFaceToUserId(String faceToUserId) {
+		this.faceToUserId = faceToUserId;
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(userName);
+		dest.writeString(userFeel);
+		dest.writeString(userTime);
+		dest.writeString(imgPath);
+		dest.writeString(statu);
+		dest.writeString(groupId);
+		dest.writeString(userId);
+		dest.writeInt(groupType);
+		dest.writeString(groupName);
+		dest.writeInt(count);
+		dest.writeString(faceToUserId);
+	}
+
+	public static final Parcelable.Creator<RecentChat> CREATOR = new Parcelable.Creator<RecentChat>() {
+
+		@Override
+		public RecentChat createFromParcel(Parcel source) {
+			return new RecentChat(source);
+		}
+
+		@Override
+		public RecentChat[] newArray(int size) {
+			return new RecentChat[size];
+		}
+
+	};
+
+	private RecentChat(Parcel in) {
+		userName = in.readString();
+		userFeel = in.readString();
+		userTime = in.readString();
+		imgPath = in.readString();
+		statu = in.readString();
+		groupId = in.readString();
+		userId = in.readString();
+		groupType = in.readInt();
+		groupName = in.readString();
+		count = in.readInt();
+		faceToUserId = in.readString();
+
 	}
 
 }

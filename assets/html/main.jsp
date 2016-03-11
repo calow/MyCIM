@@ -52,6 +52,28 @@
             var callbackID = callbackId(success, fail);
             demo.createWebView(params);
         }
+        
+        var str3 = '{"toolId":"8","action":"action","tvId":"6","runType":"1","param1":"1","param2":"2","param3":"3","param4":"4"}';
+        function runTool(){
+        	runTool2(str3, function(result) {
+            	alert("success = " + result);
+            },function(result){
+            	alert("error = " + result);
+            });
+        }
+        
+        function runTool2(params, successCallback, errorCallback){
+        	var success = typeof successCallback !== 'function' ? null : function(args) 
+            {
+                successCallback(args);
+            },
+            fail = typeof errorCallback !== 'function' ? null : function(code) 
+            {
+                errorCallback(code);
+            };
+            var callbackID = callbackId(success, fail);
+            demo.loadExtend(callbackID, params);
+        }
 
 		</script>
 		<link rel="stylesheet" href="./css/common.css" type="text/css" charset="utf-8"/>
@@ -66,7 +88,8 @@
 			<br/>
             <div class="button" onclick="test1()">测试js调用java</div>
             <div class="button" onclick="openWebview()">打开新的webview</div>
-            <input type="text" placeholder="输入电话号码" id="phoneNum" name="phoneNum" value="">
+            <div class="button" onclick="runTool()">运行本地工具</div>
+            <input type="text" placeholder="" id="phoneNum" name="phoneNum" value="">
 			<br/>
 		</div>
 	</body>

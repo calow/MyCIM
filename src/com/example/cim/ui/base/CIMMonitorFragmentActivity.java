@@ -8,6 +8,7 @@ import com.example.cim.listener.OnCIMMessageListener;
 import com.example.cim.manager.CIMListenerManager;
 import com.example.cim.nio.mutual.Message;
 import com.example.cim.nio.mutual.ReplyBody;
+import com.example.cim.util.MyActivityManager;
 
 public class CIMMonitorFragmentActivity extends FragmentActivity implements
 		OnCIMMessageListener {
@@ -16,18 +17,14 @@ public class CIMMonitorFragmentActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		CIMListenerManager.registerMessageListener(this, this);
-	}
-	
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		CIMListenerManager.registerMessageListener(this, this);
+		MyActivityManager.registerActivity(this, this);
 	}
 
 	@Override
 	public void finish() {
 		super.finish();
 		CIMListenerManager.removeMessageListener(this);
+		MyActivityManager.removeActivity(this);
 	}
 
 	@Override
@@ -52,7 +49,7 @@ public class CIMMonitorFragmentActivity extends FragmentActivity implements
 
 	@Override
 	public void onConnectionSucceed() {
-
+		
 	}
 
 	@Override

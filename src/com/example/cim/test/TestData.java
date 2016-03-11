@@ -13,14 +13,14 @@ public class TestData {
 	public static List<RecentChat> getRecentChats(){
 		String path=FileUtil.getRecentChatPath();
 		List<RecentChat> chats=new ArrayList<RecentChat>();
-		chats.add(new RecentChat("宋慧乔", "好好学习天天向上", "12:30", path+names[0], "0", "", "", 0, "", 0));
-		chats.add(new RecentChat("章泽天", "好好学习天天向上", "16:30", path+names[1], "0", "", "", 0, "", 0));
-		chats.add(new RecentChat("宋茜", "好好学习天天向上", "17:30", path+names[2], "0", "", "", 0, "", 0));
-		chats.add(new RecentChat("韩孝珠", "好好学习天天向上", "昨天", path+names[3], "0", "", "", 0, "", 0));
-		chats.add(new RecentChat("景甜", "好好学习天天向上", "星期一", path+names[4], "0", "", "", 0, "", 0));
-		chats.add(new RecentChat("刘亦菲", "好好学习天天向上", "17:30", path+names[5], "0", "", "", 0, "", 0));
-		chats.add(new RecentChat("康逸琨", "好好学习天天向上", "昨天", path+names[6], "0", "", "", 0, "", 0));
-		chats.add(new RecentChat("邓紫棋", "好好学习天天向上", "星期一", path+names[7], "0", "", "", 0, "", 0));
+		chats.add(new RecentChat("宋慧乔", "好好学习天天向上", "12:30", path+names[0], "0", "", "", 0, "", 0,""));
+		chats.add(new RecentChat("章泽天", "好好学习天天向上", "16:30", path+names[1], "0", "", "", 0, "", 0,""));
+		chats.add(new RecentChat("宋茜", "好好学习天天向上", "17:30", path+names[2], "0", "", "", 0, "", 0,""));
+		chats.add(new RecentChat("韩孝珠", "好好学习天天向上", "昨天", path+names[3], "0", "", "", 0, "", 0,""));
+		chats.add(new RecentChat("景甜", "好好学习天天向上", "星期一", path+names[4], "0", "", "", 0, "", 0,""));
+		chats.add(new RecentChat("刘亦菲", "好好学习天天向上", "17:30", path+names[5], "0", "", "", 0, "", 0,""));
+		chats.add(new RecentChat("康逸琨", "好好学习天天向上", "昨天", path+names[6], "0", "", "", 0, "", 0,""));
+		chats.add(new RecentChat("邓紫棋", "好好学习天天向上", "星期一", path+names[7], "0", "", "", 0, "", 0,""));
 		return chats;
 	}
 	

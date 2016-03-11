@@ -9,4 +9,5 @@ public interface IWebview {
 	public Context getContext();
 	public Activity getActivity();
 	public WebView getWebview();
+	public void loadUrl(String url);
 }

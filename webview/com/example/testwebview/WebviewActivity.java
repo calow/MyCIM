@@ -1,41 +1,36 @@
 package com.example.testwebview;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.webkit.JsPromptResult;
-import android.webkit.JsResult;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 
 import com.example.cim.R;
+import com.example.cim.fragment.WebViewFragment;
+import com.example.cim.ui.MainActivity;
+import com.example.cim.ui.base.CIMMonitorFragmentActivity;
 import com.example.cim.view.TitleBarView;
-import com.example.manage.WebViewManage;
 
-public class WebviewActivity extends Activity {
+public class WebviewActivity extends CIMMonitorFragmentActivity{
 
-	private WebView myWebView;
-	private FrameLayout mLayout;
 	private TitleBarView mTitleBarView;
 	private String title = "";
 	private String url;
+	private WebViewFragment recent;
+
+	private Map<String, WebViewFragment> maps = new HashMap<String, WebViewFragment>();
 
 	@SuppressLint("HandlerLeak")
 	public Handler mHandler = new Handler() {
@@ -46,17 +41,20 @@ public class WebviewActivity extends Activity {
 			Bundle bundle = msg.getData();
 			switch (index) {
 			case 1:
-				WebView view = new WebView(WebviewActivity.this);
-				view.setId(Integer.parseInt(bundle.getString("id")));
-				FrameLayout.LayoutParams layoutparams = new FrameLayout.LayoutParams(
-						LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-				layoutparams.setMargins(0,
-						Integer.parseInt(bundle.getString("marginTop")), 0,
-						Integer.parseInt(bundle.getString("marginBottom")));
-				mLayout.addView(view, layoutparams);
-				WebViewManage.getInstance().putWebview(bundle.getString("id"),
-						view);
-				view.loadUrl(bundle.getString("path"));
+
+				String url = bundle.getString("url");
+				if (!maps.containsKey(url)) {
+					WebViewFragment fragment = new WebViewFragment();
+					fragment.setHandler(mHandler);
+					Bundle b = new Bundle();
+					b.putString("url", url);
+					fragment.setArguments(b);
+					FragmentManager fm = getSupportFragmentManager();
+					FragmentTransaction ft = fm.beginTransaction();
+					ft.add(R.id.fl_webview_activity, fragment);
+					ft.show(fragment).hide(recent).commit();
+					recent = fragment;
+				}
 			}
 		}
 	};
@@ -80,13 +78,45 @@ public class WebviewActivity extends Activity {
 		}
 	}
 
-	private void findView() {
-		mTitleBarView = (TitleBarView) findViewById(R.id.title_bar);
-		myWebView = (WebView) findViewById(R.id.my_webview);
-		mLayout = (FrameLayout) findViewById(R.id.fl_main);
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		initWithNewIntent(intent);
 	}
 
-	@SuppressLint({ "JavascriptInterface", "SetJavaScriptEnabled" })
+	public void initWithNewIntent(Intent intent) {
+		if (intent != null) {
+			Bundle bundle = intent.getExtras();
+			title = bundle.getString("title");
+			url = bundle.getString("url");
+			mTitleBarView.setTitleText(title);
+			FragmentManager fm = getSupportFragmentManager();
+			WebViewFragment myFragment;
+			if (maps.containsKey(url)) {
+				myFragment = maps.get(url);
+			} else {
+				myFragment = new WebViewFragment();
+				Bundle b = new Bundle();
+				b.putString("url", url);
+				myFragment.setArguments(b);
+				FragmentTransaction ft = fm.beginTransaction();
+				ft.add(R.id.fl_webview_activity, myFragment).commit();
+				maps.put(url, myFragment);
+			}
+			FragmentTransaction ft = fm.beginTransaction();
+			if (recent != null) {
+				ft.hide(recent);
+			}
+			ft.show(myFragment);
+			ft.commit();
+			recent = myFragment;
+		}
+	}
+
+	private void findView() {
+		mTitleBarView = (TitleBarView) findViewById(R.id.title_bar);
+	}
+
 	private void init() {
 		// 初始化title
 		mTitleBarView.setCommonTitle(View.VISIBLE, View.VISIBLE, View.GONE,
@@ -94,160 +124,41 @@ public class WebviewActivity extends Activity {
 		mTitleBarView.setTitleText(title);
 		mTitleBarView.setBtnLeft(R.drawable.boss_unipay_icon_back,
 				R.string.back);
-		mTitleBarView.setBtnRight(R.drawable.noq);
 		mTitleBarView.setBtnLeftOnclickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				finish();
+				Intent intent = new Intent(WebviewActivity.this, MainActivity.class);
+				startActivity(intent);
+				overridePendingTransition(R.anim.activity_back, R.anim.activity_finish);
+//				finish();
 			}
 		});
-
-		myWebView.addJavascriptInterface(new Demo(this, myWebView, mHandler),
-				"demo");
-		myWebView.requestFocus();
-		WebSettings webSettings = myWebView.getSettings();
-		webSettings.setJavaScriptEnabled(true);
-		myWebView.setWebViewClient(new WebViewClient() {
-			@Override
-			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				view.loadUrl(url);
-				return true;
-			}
-		});
-		myWebView.setWebChromeClient(new WebChromeClient() {
-			/**
-			 * 覆盖默认的window.alert展示界面，避免title里显示为“：来自file:////”
-			 */
-			@Override
-			public boolean onJsAlert(WebView view, String url, String message,
-					JsResult result) {
-				final AlertDialog.Builder builder = new AlertDialog.Builder(
-						view.getContext());
-
-				builder.setTitle("对话框").setMessage(message)
-						.setPositiveButton("确定", null);
-
-				// 不需要绑定按键事件
-				// 屏蔽keycode等于84之类的按键
-				builder.setOnKeyListener(new OnKeyListener() {
-					public boolean onKey(DialogInterface dialog, int keyCode,
-							KeyEvent event) {
-						Log.v("onJsAlert", "keyCode==" + keyCode + "event="
-								+ event);
-						return true;
-					}
-				});
-				// 禁止响应按back键的事件
-				builder.setCancelable(false);
-				AlertDialog dialog = builder.create();
-				dialog.show();
-				result.confirm();// 因为没有绑定事件，需要强行confirm,否则页面会变黑显示不了内容。
-				return true;
-				// return super.onJsAlert(view, url, message, result);
-			}
-
-			/**
-			 * 覆盖默认的window.confirm展示界面，避免title里显示为“：来自file:////”
-			 */
-			@Override
-			public boolean onJsConfirm(WebView view, String url,
-					String message, final JsResult result) {
-				final AlertDialog.Builder builder = new AlertDialog.Builder(
-						view.getContext());
-				builder.setTitle("对话框")
-						.setMessage(message)
-						.setPositiveButton("确定",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										result.confirm();
-									}
-								})
-						.setNeutralButton("取消",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										result.cancel();
-									}
-								});
-				builder.setOnCancelListener(new OnCancelListener() {
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						result.cancel();
-					}
-				});
-
-				// 屏蔽keycode等于84之类的按键，避免按键后导致对话框消息而页面无法再弹出对话框的问题
-				builder.setOnKeyListener(new OnKeyListener() {
-					@Override
-					public boolean onKey(DialogInterface dialog, int keyCode,
-							KeyEvent event) {
-						Log.v("onJsConfirm", "keyCode==" + keyCode + "event="
-								+ event);
-						return true;
-					}
-				});
-				// 禁止响应按back键的事件
-				// builder.setCancelable(false);
-				AlertDialog dialog = builder.create();
-				dialog.show();
-				return true;
-				// return super.onJsConfirm(view, url, message, result);
-			}
-			
-			/** 
-		     * 覆盖默认的window.prompt展示界面，避免title里显示为“：来自file:////” 
-		     * window.prompt('请输入您的域名地址', '618119.com'); 
-		     */  
-			@Override
-			public boolean onJsPrompt(WebView view, String url, String message,
-					String defaultValue, final JsPromptResult result) {
-		        final AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());  
-		                  
-		        builder.setTitle("对话框").setMessage(message);  
-		                  
-		        final EditText et = new EditText(view.getContext());  
-		        et.setSingleLine();  
-		        et.setText(defaultValue);  
-		        builder.setView(et)  
-		                .setPositiveButton("确定", new DialogInterface.OnClickListener() {  
-		                    public void onClick(DialogInterface dialog, int which) {  
-		                        result.confirm(et.getText().toString());  
-		                    }  
-		          
-		                })  
-		                .setNeutralButton("取消", new DialogInterface.OnClickListener() {  
-		                    public void onClick(DialogInterface dialog, int which) {  
-		                        result.cancel();  
-		                    }  
-		                });  
-		  
-		        // 屏蔽keycode等于84之类的按键，避免按键后导致对话框消息而页面无法再弹出对话框的问题  
-		        builder.setOnKeyListener(new OnKeyListener() {  
-		            public boolean onKey(DialogInterface dialog, int keyCode,KeyEvent event) {  
-		                Log.v("onJsPrompt", "keyCode==" + keyCode + "event="+ event);  
-		                return true;  
-		            }  
-		        });  
-		  
-		        // 禁止响应按back键的事件  
-		        // builder.setCancelable(false);  
-		        AlertDialog dialog = builder.create();  
-		        dialog.show();  
-		        return true;  
-		        // return super.onJsPrompt(view, url, message, defaultValue,  
-		        // result);  
-		    }
-		});
-		myWebView.loadUrl(url);
+		FragmentManager fm = getSupportFragmentManager();
+		WebViewFragment myFragment;
+		if (maps.containsKey(url)) {
+			myFragment = maps.get(url);
+		} else {
+			myFragment = new WebViewFragment();
+			Bundle bundle = new Bundle();
+			bundle.putString("url", url);
+			myFragment.setArguments(bundle);
+			FragmentTransaction ft = fm.beginTransaction();
+			ft.add(R.id.fl_webview_activity, myFragment).commit();
+			maps.put(url, myFragment);
+		}
+		FragmentTransaction ft = fm.beginTransaction();
+		if (recent != null) {
+			ft.hide(recent);
+		}
+		ft.show(myFragment);
+		ft.commit();
+		recent = myFragment;
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if ((keyCode == KeyEvent.KEYCODE_BACK) && myWebView.canGoBack()) {
-			myWebView.goBack();
+		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+			recent.dispatchGoBack();
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);

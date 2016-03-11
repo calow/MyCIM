@@ -33,7 +33,6 @@ import com.example.cim.nio.constant.Constant;
 import com.example.cim.nio.mutual.Message;
 import com.example.cim.nio.mutual.ReplyBody;
 import com.example.cim.nio.mutual.SentBody;
-import com.example.cim.ui.ChatActivity;
 import com.example.cim.ui.MainActivity;
 import com.example.cim.util.CIMDataConfig;
 
@@ -100,8 +99,9 @@ public abstract class CIMEnventListenerReceiver extends BroadcastReceiver
 			// 绑定用户成功后
 			String keyName = replyBody.getKey();
 			String code = replyBody.getCode();
-			//绑定消息回复
-			if(keyName.equals("client_bind") && code.equals(CIMConstant.ReturnCode.CODE_200)){
+			// 绑定消息回复
+			if (keyName.equals("client_bind")
+					&& code.equals(CIMConstant.ReturnCode.CODE_200)) {
 				// 获取未读消息列表
 				SentBody sentBody = new SentBody();
 				sentBody.setKey("client_get_unread_message");
@@ -110,13 +110,17 @@ public abstract class CIMEnventListenerReceiver extends BroadcastReceiver
 				sentBody.setKey("client_get_online_friends");
 				CIMPushManager.sendRequest(mContext, sentBody);
 			}
-			//未读消息列表回复
-			if(keyName.equals("client_get_unread_message") && code.equals(CIMConstant.ReturnCode.CODE_200)){
+			// 未读消息列表回复
+			if (keyName.equals("client_get_unread_message")
+					&& code.equals(CIMConstant.ReturnCode.CODE_200)) {
 				String unReadList = replyBody.getMessage();
-				if (unReadList != null && !unReadList.equals("") && !unReadList.equals("null")) {
-					List<String> messageSetIdList = MessageListManage.getInstance(mContext).saveOrUpdateMessage(unReadList, null);//保存未读消息列表到数据库
-					if(messageSetIdList != null && messageSetIdList.size() > 0){
-						//更新服务器中消息推送状态
+				if (unReadList != null && !unReadList.equals("")
+						&& !unReadList.equals("null")) {
+					List<String> messageSetIdList = MessageListManage
+							.getInstance(mContext).saveOrUpdateMessage(
+									unReadList, null);// 保存未读消息列表到数据库
+					if (messageSetIdList != null && messageSetIdList.size() > 0) {
+						// 更新服务器中消息推送状态
 						SentBody sentBody = new SentBody();
 						sentBody.setKey("client_update_offline_message");
 						JSONArray jsonarray = new JSONArray(messageSetIdList);
@@ -124,24 +128,29 @@ public abstract class CIMEnventListenerReceiver extends BroadcastReceiver
 						CIMPushManager.sendRequest(context, sentBody);
 					}
 				}
-				if(isInBackground(context)){
-					//在通知栏中显示离线消息
-					
+				if (isInBackground(context)) {
+					// 在通知栏中显示离线消息
+
 				}
 			}
-			//好友列表回复
-			if(keyName.equals("client_get_online_friends") && code.equals(CIMConstant.ReturnCode.CODE_200)){
+			// 好友列表回复
+			if (keyName.equals("client_get_online_friends")
+					&& code.equals(CIMConstant.ReturnCode.CODE_200)) {
 				String friendList = replyBody.getMessage();
-				if (friendList != null && !friendList.equals("") && !friendList.equals("null")) {
-					FriendListManage.getInstance(mContext).saveOrUpdate(friendList);
+				if (friendList != null && !friendList.equals("")
+						&& !friendList.equals("null")) {
+					FriendListManage.getInstance(mContext).saveOrUpdate(
+							friendList);
 				}
 			}
-			//获取某个聊天室消息列表
-			if(keyName.equals("client_get_group_message") && code.equals(CIMConstant.ReturnCode.CODE_200)){
+			// 获取某个聊天室消息列表
+			if (keyName.equals("client_get_group_message")
+					&& code.equals(CIMConstant.ReturnCode.CODE_200)) {
 				String message = replyBody.getMessage();
-				if (message != null && !message.equals("") && !message.equals("null")) {
-					MessageManage.getInstance(mContext).saveOrUpdateGroupMessage(
-							message, null);
+				if (message != null && !message.equals("")
+						&& !message.equals("null")) {
+					MessageManage.getInstance(mContext)
+							.saveOrUpdateGroupMessage(message, null);
 				}
 			}
 			onReplyReceived(replyBody);
@@ -160,7 +169,8 @@ public abstract class CIMEnventListenerReceiver extends BroadcastReceiver
 		}
 		// 更新UI
 		if (intent.getAction().equals(Constant.NOTIFY_UI_CHANGED)) {
-			String flag = intent.getStringExtra(Constant.NOTIFY_UI_CHANGED_FLAG);
+			String flag = intent
+					.getStringExtra(Constant.NOTIFY_UI_CHANGED_FLAG);
 			notifyUIChanged(flag);
 		}
 	}
@@ -232,11 +242,11 @@ public abstract class CIMEnventListenerReceiver extends BroadcastReceiver
 			CIMDataConfig.putBoolean(mContext, CIMDataConfig.KEY_MANUAL_STOP,
 					true);
 		}
-		//将消息写到数据库
+		// 将消息写到数据库
 		long result = saveMessageToDB(message);
-		if(result > 0){
+		if (result > 0) {
 			String messageSetId = message.getMessageSetId();
-			//更新服务器中消息推送状态
+			// 更新服务器中消息推送状态
 			SentBody sentBody = new SentBody();
 			sentBody.setKey("client_update_offline_message");
 			JSONArray jsonarray = new JSONArray();
@@ -244,11 +254,11 @@ public abstract class CIMEnventListenerReceiver extends BroadcastReceiver
 			sentBody.put("list", jsonarray.toString());
 			CIMPushManager.sendRequest(mContext, sentBody);
 		}
-		//传递收到消息信号
+		// 传递收到消息信号
 		onMessageReceived(message);
 	}
-	
-	private long saveMessageToDB(Message message){
+
+	private long saveMessageToDB(Message message) {
 		long result = 0;
 		if (message != null && !message.equals("") && !message.equals("null")) {
 			ContentValues value = new ContentValues();
@@ -266,11 +276,22 @@ public abstract class CIMEnventListenerReceiver extends BroadcastReceiver
 			value.put("M_Statu", 0);
 			value.put("M_UserID", CIMDataConfig.getString(mContext,
 					CIMDataConfig.KEY_ACCOUNT));
-			result = MessageManage.getInstance(mContext).saveReceiveMessage(value, null);
+			if (message.getType().equals("1")) {// 私聊室
+				value.put(
+						"M_JSon",
+						message.getSender()
+								+ ":"
+								+ CIMDataConfig.getString(mContext,
+										CIMDataConfig.KEY_ACCOUNT));
+			} else if (message.getType().equals("2")) {// 群聊室
+				value.put("M_JSon", message.getGroupId());
+			}
+			result = MessageManage.getInstance(mContext).saveReceiveMessage(
+					value, null);
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 连接出现异常
 	 * 

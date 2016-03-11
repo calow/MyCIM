@@ -25,6 +25,8 @@ public class API {
 	public final static String User_URL = Constant.SERVER_URL + "/user/";
 	public final static String UserLogin_URL = Constant.SERVER_URL + "/user/user_login.action";
 	public final static String UpAndDown_URL = Constant.SERVER_URL + "/upanddown/";
+	public final static String PcToolList_URL = Constant.SERVER_URL + "/tool/tool_pc_list.action";
+	public final static String PhoneToolList_URL = Constant.SERVER_URL + "/tool/tool_phone_list.action";
 
 	public static String httpPost(String url, Map<String, String> map, File file)
 			throws ClientProtocolException, IOException {
@@ -35,17 +37,18 @@ public class API {
 			ContentBody cbFile = new FileBody(file);
 			mpEntity.addPart("file", cbFile);
 		}
-		for (String key : map.keySet()) {
-			if (map.get(key) != null) {
-				StringBody stringBody = new StringBody(map.get(key),
-						Charset.forName("UTF-8"));
-				mpEntity.addPart(key, stringBody);
+		if(map != null){
+			for (String key : map.keySet()) {
+				if (map.get(key) != null) {
+					StringBody stringBody = new StringBody(map.get(key),
+							Charset.forName("UTF-8"));
+					mpEntity.addPart(key, stringBody);
+				}
 			}
 		}
 
 		// 设置参数实体
 		httpPost.setEntity(mpEntity);
-		System.out.println("request params:--->>" + map.toString());
 		// 获取HttpClient对象
 		HttpClient httpClient = new DefaultHttpClient();
 		// 连接超时

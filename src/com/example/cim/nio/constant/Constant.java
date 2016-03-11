@@ -11,7 +11,9 @@ public interface Constant {
 	// "http://10.0.2.2:8080/ichat-server";
 	// //服务端IP地址
 	// public static final String CIM_SERVER_HOST = "10.0.2.2";
-
+	
+	public static String locationUrl = "file://";
+	
 	// 服务端web地址
 	public static final String SERVER_URL = "http://222.201.139.178:8080/MinaServer";
 	// 服务端IP地址

@@ -1,5 +1,6 @@
 package com.example.cim.fragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -23,7 +24,7 @@ import com.example.cim.view.TitleBarView;
 
 public class NewsFragmentFather extends Fragment {
 
-	private static final String TAG = "NewsFragment";
+	private static final String TAG = "NewsFragmentFather";
 
 	private Context mContext;
 	private View mBaseView;
@@ -154,7 +155,7 @@ public class NewsFragmentFather extends Fragment {
 		});
 	}
 
-	public void updateMessageList(List<RecentChat> list) {
+	public void updateMessageList(ArrayList<RecentChat> list) {
 		newsFragment.updateItemStatu(list);
 	}
 

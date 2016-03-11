@@ -1,13 +1,15 @@
 package com.example.cim.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import net.sqlcipher.database.SQLiteDatabase;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
@@ -20,24 +22,25 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cim.R;
-import com.example.cim.cache.FriendListManage;
 import com.example.cim.cache.MessageListManage;
-import com.example.cim.cache.MessageManage;
 import com.example.cim.fragment.ConstactFatherFragment;
 import com.example.cim.fragment.DynamicFragment;
 import com.example.cim.fragment.NewsFragmentFather;
 import com.example.cim.fragment.SettingFragment;
+import com.example.cim.fragment.ToolFragmentFather;
+import com.example.cim.listener.OnCIMMessageListener;
+import com.example.cim.manager.CIMListenerManager;
 import com.example.cim.manager.CIMPushManager;
 import com.example.cim.model.RecentChat;
 import com.example.cim.nio.constant.Constant;
 import com.example.cim.nio.mutual.Message;
 import com.example.cim.nio.mutual.ReplyBody;
-import com.example.cim.nio.mutual.SentBody;
 import com.example.cim.ui.base.CIMMonitorFragmentActivity;
+import com.example.cim.util.MyActivityManager;
 import com.example.cim.util.CIMDataConfig;
-import com.example.cim.util.FaceConversionUtil;
 import com.example.cim.util.KeyName;
 
 public class MainActivity extends CIMMonitorFragmentActivity {
@@ -53,18 +56,29 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 	private TextView app_exit;
 	private TextView app_change;
 
-	private int mLevel = 1;
 	private PopupWindow mPopupWindow;
 	private LinearLayout buttomBarGroup;
 
-	private SQLiteDatabase db;
 
-	private Fragment[] fragment = new Fragment[4];
 	private NewsFragmentFather newsFragmentFather;
 	private ConstactFatherFragment constactFatherFragment;
 	private DynamicFragment dynamicFragment;
 	private SettingFragment settingFragment;
+	private ToolFragmentFather toolFragmentFather;
 	private FragmentManager fm;
+	
+	private boolean exitFlag = false;
+	
+	@SuppressLint("HandlerLeak")
+	Handler mHandler = new Handler(){
+
+		@Override
+		public void handleMessage(android.os.Message msg) {
+			super.handleMessage(msg);
+			exitFlag = false;
+		}
+		
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -129,8 +143,6 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 				finish();
 			}
 		});
-		// 获取加密的数据库对象
-		// db = DBManager.getInstance(this).getDatabase();
 	}
 
 	private OnClickListener newsOnclickListener = new OnClickListener() {
@@ -150,8 +162,11 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 			if (dynamicFragment != null) {
 				ft.hide(dynamicFragment);
 			}
-			if(settingFragment != null){
-				ft.hide(settingFragment);
+//			if(settingFragment != null){
+//				ft.hide(settingFragment);
+//			}
+			if(toolFragmentFather != null){
+				ft.hide(toolFragmentFather);
 			}
 			ft.commit();
 		}
@@ -174,8 +189,11 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 			if (dynamicFragment != null) {
 				ft.hide(dynamicFragment);
 			}
-			if(settingFragment != null){
-				ft.hide(settingFragment);
+//			if(settingFragment != null){
+//				ft.hide(settingFragment);
+//			}
+			if(toolFragmentFather != null){
+				ft.hide(toolFragmentFather);
 			}
 			ft.commit();
 		}
@@ -198,8 +216,11 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 			if (constactFatherFragment != null) {
 				ft.hide(constactFatherFragment);
 			}
-			if(settingFragment != null){
-				ft.hide(settingFragment);
+//			if(settingFragment != null){
+//				ft.hide(settingFragment);
+//			}
+			if(toolFragmentFather != null){
+				ft.hide(toolFragmentFather);
 			}
 			ft.commit();
 		}
@@ -211,11 +232,16 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 		public void onClick(View v) {
 			setButton(v);
 			FragmentTransaction ft = fm.beginTransaction();
-			if(settingFragment == null){
-				settingFragment = new SettingFragment();
-				ft.add(R.id.fl_content, settingFragment);
+//			if(settingFragment == null){
+//				settingFragment = new SettingFragment();
+//				ft.add(R.id.fl_content, settingFragment);
+//			}
+//			ft.show(settingFragment);
+			if(toolFragmentFather == null){
+				toolFragmentFather = new ToolFragmentFather();
+				ft.add(R.id.fl_content, toolFragmentFather);
 			}
-			ft.show(settingFragment);
+			ft.show(toolFragmentFather);
 			if (newsFragmentFather != null) {
 				ft.hide(newsFragmentFather);
 			}
@@ -269,7 +295,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 	@Override
 	public void onMessageReceived(Message message) {
 		if (message != null) {
-			List<RecentChat> list = MessageListManage.getInstance(mContext)
+			ArrayList<RecentChat> list = MessageListManage.getInstance(mContext)
 					.getChatRoomList(
 							null,
 							CIMDataConfig.getString(mContext,
@@ -318,7 +344,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 
 	public void dispatchUnReadMessage(String message) {
 		if (message != null && !message.equals("") && !message.equals("null")) {
-			List<RecentChat> list = MessageListManage.getInstance(mContext)
+			ArrayList<RecentChat> list = MessageListManage.getInstance(mContext)
 					.getChatRoomList(
 							null,
 							CIMDataConfig.getString(mContext,
@@ -341,7 +367,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 	@Override
 	public void notifyUIChanged(String flag) {
 		if (flag.equals(Constant.UIChangeType.MESSAGELIST)) {
-			List<RecentChat> list = MessageListManage.getInstance(mContext)
+			ArrayList<RecentChat> list = MessageListManage.getInstance(mContext)
 					.getChatRoomList(
 							null,
 							CIMDataConfig.getString(mContext,
@@ -349,4 +375,37 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 			newsFragmentFather.updateMessageList(list);
 		}
 	}
+	
+	/**
+     * 监听Back键按下事件,方法1:
+     * 注意:
+     * super.onBackPressed()会自动调用finish()方法,关闭
+     * 当前Activity.
+     * 若要屏蔽Back键盘,注释该行代码即可
+     */ 
+    @Override 
+    public void onBackPressed() {
+    	if(!exitFlag){//第一次点击返回键
+    		exitFlag = true;
+    		runOnUiThread(new Runnable() {
+    			
+    			@Override
+    			public void run() {
+    				Toast.makeText(getApplicationContext(), "再按一次退出程序",
+    	                    Toast.LENGTH_SHORT).show();
+    	            // 利用handler延迟发送更改状态信息
+    			}
+    		});
+    		mHandler.sendEmptyMessageDelayed(0, 2000);
+    	}else{
+    		ArrayList<Activity> list = MyActivityManager.getLists();
+    		for(int i = 0; i < list.size(); i++){
+    			if(MainActivity.this != list.get(i)){
+    				list.get(i).finish();
+    			}
+    		}
+    		finish();
+    		System.exit(0);
+    	}
+    }
 }

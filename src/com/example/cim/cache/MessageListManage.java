@@ -96,12 +96,12 @@ public class MessageListManage {
 		return messageSetIdList;
 	}
 
-	public List<RecentChat> getChatRoomList(SQLiteDatabase database,
+	public ArrayList<RecentChat> getChatRoomList(SQLiteDatabase database,
 			String userAccount){
 		String sql = "select count(*), M_GroupID from message where M_UserID=? and M_Statu=? group by M_GroupID order by M_CreateTime desc";
 		String[] selectionArgs = new String[] { userAccount, "0" };
 		Cursor cursor = DBManager.getInstance(mContext).rawQuery(sql, selectionArgs, database);
-		List<RecentChat> list = new ArrayList<RecentChat>();
+		ArrayList<RecentChat> list = new ArrayList<RecentChat>();
 		if (cursor != null) {
 			int i = 0;
 			while (cursor.moveToNext()) {
@@ -142,9 +142,11 @@ public class MessageListManage {
 									CIMDataConfig.KEY_USERNAME))){
 								userName = group[1];
 								picture = API.UpAndDown_URL + "download_userPic.action" + "?id=" + json[1];
+								chat.setFaceToUserId(json[1]);
 							}else{
 								userName = group[0];
 								picture = API.UpAndDown_URL + "download_userPic.action" + "?id=" + json[0];
+								chat.setFaceToUserId(json[0]);
 							}
 							content = cursor2.getString(cursor2
 									.getColumnIndex("M_Content"));
@@ -157,6 +159,7 @@ public class MessageListManage {
 									+ cursor2.getString(cursor2
 											.getColumnIndex("M_Content"));
 							picture = API.UpAndDown_URL + "download_groupPic.action" + "?id=" + groupId;//群聊时，用群ID来获取群头像
+							chat.setFaceToUserId(groupId);
 						}
 						chat.setImgPath(picture);//互动室头像
 						chat.setUserName(userName);//互动室名称
