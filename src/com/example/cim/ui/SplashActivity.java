@@ -5,6 +5,7 @@ import com.example.cim.manager.CIMPushManager;
 import com.example.cim.nio.constant.Constant;
 import com.example.cim.test.SDManager;
 import com.example.cim.ui.base.CIMMonitorActivity;
+import com.example.cim.util.CIMDataConfig;
 import com.example.cim.util.SpUtil;
 
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import android.widget.ImageView;
 public class SplashActivity extends CIMMonitorActivity {
 
 	protected static final String TAG = "SplashActivity";
-	
+
 	boolean initComplete = false;
 	private Context mContext;
 	private ImageView mImageView;
@@ -32,7 +33,7 @@ public class SplashActivity extends CIMMonitorActivity {
 		setContentView(view);
 		mContext = this;
 		mImageView = (ImageView) findViewById(R.id.welcome_img);
-		
+
 		AlphaAnimation aa = new AlphaAnimation(0.3f, 1.0f);
 		aa.setDuration(2000);
 		view.startAnimation(aa);
@@ -56,14 +57,16 @@ public class SplashActivity extends CIMMonitorActivity {
 					SDManager manager = new SDManager(mContext);
 					manager.moveUserIcon();
 					SpUtil.getInstance().setBooleanSharedPerference(sp, "isFirst", true);
-					Intent intent = new Intent(mContext, LoginActivity.class);
-					startActivity(intent);
-					finish();
-				}else{
-					Intent intent = new Intent(mContext, LoginActivity.class);
-					startActivity(intent);
-					finish();
 				}
+				String userName = CIMDataConfig.getString(SplashActivity.this,  CIMDataConfig.KEY_ACCOUNT);
+				Intent intent = null;
+				if(userName == null){
+					intent = new Intent(mContext, LoginActivity.class);
+				}else{
+					intent = new Intent(mContext, MainActivity.class);
+				}
+				startActivity(intent);
+				finish();
 			}
 		}, 2000);
 	}

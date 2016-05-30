@@ -18,12 +18,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.example.cim.R;
 import com.example.cim.adapter.ChatMsgAdapter;
@@ -51,18 +54,12 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 	private EditText mEditText;
 
 	private TitleBarView mTitleBarView;
+	
+	private RelativeLayout mRelativeLayout;
+	
+	private RelativeLayout mRelativtLayoutBottom;
 
 	private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
-
-	private String[] msgArray = new String[] { "[√ƒ—€]≤‚ ‘¿≤[√ƒ—€]", "≤‚ ‘¿≤", "≤‚ ‘¿≤",
-			"≤‚ ‘¿≤", "≤‚ ‘¿≤", "ƒ„√√[ø‡±∆]", "≤‚[æ™—»]ƒ„√√", "≤‚ƒ„√√[ §¿˚]", "≤‚ ‘¿≤" };
-
-	private String[] dataArray = new String[] { "2012-12-12 12:00",
-			"2012-12-12 12:10", "2012-12-12 12:11", "2012-12-12 12:20",
-			"2012-12-12 12:30", "2012-12-12 12:35", "2012-12-12 12:40",
-			"2012-12-12 12:50", "2012-12-12 12:50" };
-
-	private final static int COUNT = 9;
 
 	private final static int UPDATE_CHAACTIVITY = 1;
 
@@ -113,6 +110,8 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 		btnSend = (Button) findViewById(R.id.btn_send);
 		mEditText = (EditText) findViewById(R.id.et_message);
 		mTitleBarView = (TitleBarView) findViewById(R.id.title_bar);
+		mRelativeLayout = (RelativeLayout) findViewById(R.id.rl_chat);
+		mRelativtLayoutBottom = (RelativeLayout) findViewById(R.id.rl_facetable);
 	}
 
 	private void init() {
@@ -139,7 +138,21 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 				finish();
 			}
 		});
-
+		//≥ı ºªØµ„ª˜ ‰»ÎøÚ÷ÆÕ‚£¨ ‰»ÎøÚ ß»•Ωπµ„
+		mListView.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				mRelativeLayout.setFocusable(true);
+				mRelativeLayout.setFocusableInTouchMode(true);
+				mRelativeLayout.requestFocus();
+				if(mRelativtLayoutBottom.getVisibility() == View.VISIBLE){
+					mRelativtLayoutBottom.setVisibility(View.GONE);
+				}
+				return false;
+			}
+		});
+		//≥ı ºªØ∑¢ÀÕ∞¥≈•
 		btnSend.setOnClickListener(this);
 		List<ChatMsgEntity> list = MessageManage.getInstance(ChatActivity.this)
 				.getMessageListByGroupId(

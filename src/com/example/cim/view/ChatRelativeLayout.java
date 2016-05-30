@@ -15,9 +15,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -37,7 +37,6 @@ public class ChatRelativeLayout extends RelativeLayout implements
 	private Context context;
 
 	private ImageButton ib_face;
-	private Button btn_send;
 	private EditText et_message;
 	private RelativeLayout rl_facetable;
 	private ViewPager vp_contains;
@@ -88,9 +87,22 @@ public class ChatRelativeLayout extends RelativeLayout implements
 	private void initView() {
 		ib_face = (ImageButton) findViewById(R.id.ib_face);
 		ib_face.setOnClickListener(this);
-		btn_send = (Button) findViewById(R.id.btn_send);
 		et_message = (EditText) findViewById(R.id.et_message);
-		et_message.setOnClickListener(this);
+		et_message.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (hasFocus) {
+					if (rl_facetable.getVisibility() == View.VISIBLE) {
+						rl_facetable.setVisibility(View.GONE);
+					}
+				} else {
+					InputMethodManager imm = (InputMethodManager) context
+							.getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(et_message.getWindowToken(), 0);
+				}
+			}
+		});
 		rl_facetable = (RelativeLayout) findViewById(R.id.rl_facetable);
 		vp_contains = (ViewPager) findViewById(R.id.vp_contains);
 		ll_image = (LinearLayout) findViewById(R.id.ll_image);
@@ -204,15 +216,14 @@ public class ChatRelativeLayout extends RelativeLayout implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.ib_face:
+			et_message.clearFocus();//Ê§È¥½¹µã
 			if (rl_facetable.getVisibility() == View.VISIBLE) {
 				rl_facetable.setVisibility(View.GONE);
 			} else {
 				rl_facetable.setVisibility(View.VISIBLE);
-			}
-			break;
-		case R.id.btn_send:
-			if (rl_facetable.getVisibility() == View.VISIBLE) {
-				rl_facetable.setVisibility(View.GONE);
+				InputMethodManager imm = (InputMethodManager) context
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(et_message.getWindowToken(), 0);
 			}
 			break;
 		}

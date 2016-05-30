@@ -9,7 +9,9 @@
         android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
+        android:layout_alignParentBottom="true"
+        android:focusable="true"  
+        android:focusableInTouchMode="true" >
 
         <include
             android:layout_width="match_parent"
@@ -33,7 +35,8 @@
         android:divider="@null"
         android:dividerHeight="5dp"
         android:scrollbarStyle="outsideOverlay"
-        android:stackFromBottom="false" >
+        android:stackFromBottom="false"
+		android:transcriptMode="normal" >
     </ListView>
 
 </RelativeLayout>

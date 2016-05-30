@@ -47,7 +47,7 @@ public class NewsFragment extends Fragment implements OnItemClickListener {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch(msg.what){
-				case TAG_FRESH : 
+				case TAG_FRESH:
 					Bundle bundle = msg.getData();
 					ArrayList<RecentChat> list = bundle.getParcelableArrayList("list");
 					chats.clear();
@@ -55,7 +55,6 @@ public class NewsFragment extends Fragment implements OnItemClickListener {
 					adapter.notifyDataSetChanged();
 			}
 		}
-
 	};
 
 	List<RecentChat> chats = new ArrayList<RecentChat>();

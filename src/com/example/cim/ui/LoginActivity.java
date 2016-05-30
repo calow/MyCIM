@@ -113,7 +113,7 @@ public class LoginActivity extends CIMMonitorActivity {
 					CIMDataConfig.putString(LoginActivity.this, CIMDataConfig.KEY_ACCOUNT,
 							account.getText().toString().trim());
 					startActivity(intent);
-					LoginActivity.this.finish();
+					finish();
 				}
 			}
 			
