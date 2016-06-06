@@ -162,6 +162,7 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 		mDataArrays.addAll(list);
 		mAdapter = new ChatMsgAdapter(mDataArrays, this);
 		mListView.setAdapter(mAdapter);
+		mListView.setSelection(mListView.getCount() - 1);
 		new AsyncGetGroupMessage().execute(0);
 	}
 
@@ -176,6 +177,7 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 
 	public void send() {
 		final String contString = mEditText.getText().toString().trim();
+		mEditText.setText("");
 		if (contString.length() > 0) {
 			SQLiteDatabase db = DBManager.getInstance(ChatActivity.this)
 					.getDatabase();
@@ -185,9 +187,10 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 				if (result1 > 0) {
 					db.setTransactionSuccessful();
 				}
-				notifyMessageListChange();
-				showNewMessageToList(contString, result1);
-				sendMessageToServer(contString, id, String.valueOf(result1));
+				notifyMessageListChange();//通知消息列表更新显示
+//				showNewMessageToList(contString, result1);//在互动室中显示用户发送的信息
+				updateChatActivity();
+				sendMessageToServer(contString, id, String.valueOf(result1));//发送消息给服务器
 			} catch (Exception e) {
 				db.endTransaction();
 				e.printStackTrace();
@@ -306,6 +309,7 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 		entity.setName(CIMDataConfig.getString(ChatActivity.this,
 				CIMDataConfig.KEY_USERNAME));
 		entity.setMessageId(Integer.parseInt(messageId + ""));
+		entity.setSendStatu(-1);
 		mDataArrays.add(entity);
 		mAdapter.notifyDataSetChanged();
 		mEditText.setText("");
@@ -318,6 +322,7 @@ public class ChatActivity extends CIMMonitorFragmentActivity implements
 		map.put("content", contString);
 		map.put("groupId", groupId);
 		map.put("messageId", cacheMessageId);
+		map.put("loginId", CIMDataConfig.getString(ChatActivity.this, CIMDataConfig.KEY_ACCOUNT));
 		HttpRequest request = new HttpRequest(new HttpCompliteListener() {
 
 			@Override

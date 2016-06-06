@@ -295,12 +295,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 	@Override
 	public void onMessageReceived(Message message) {
 		if (message != null) {
-			ArrayList<RecentChat> list = MessageListManage.getInstance(mContext)
-					.getChatRoomList(
-							null,
-							CIMDataConfig.getString(mContext,
-									CIMDataConfig.KEY_ACCOUNT));
-			newsFragmentFather.updateMessageList(list);
+			newsFragmentFather.updateMessageList();
 		}
 	}
 
@@ -344,12 +339,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 
 	public void dispatchUnReadMessage(String message) {
 		if (message != null && !message.equals("") && !message.equals("null")) {
-			ArrayList<RecentChat> list = MessageListManage.getInstance(mContext)
-					.getChatRoomList(
-							null,
-							CIMDataConfig.getString(mContext,
-									CIMDataConfig.KEY_ACCOUNT));
-			newsFragmentFather.updateMessageList(list);
+			newsFragmentFather.updateMessageList();
 		}
 	}
 
@@ -367,12 +357,7 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 	@Override
 	public void notifyUIChanged(String flag) {
 		if (flag.equals(Constant.UIChangeType.MESSAGELIST)) {
-			ArrayList<RecentChat> list = MessageListManage.getInstance(mContext)
-					.getChatRoomList(
-							null,
-							CIMDataConfig.getString(mContext,
-									CIMDataConfig.KEY_ACCOUNT));
-			newsFragmentFather.updateMessageList(list);
+			newsFragmentFather.updateMessageList();
 		}
 	}
 	

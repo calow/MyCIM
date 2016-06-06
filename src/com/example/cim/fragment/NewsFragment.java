@@ -89,7 +89,7 @@ public class NewsFragment extends Fragment implements OnItemClickListener {
 		mCustomListView.setOnItemClickListener(this);
 
 		mCustomListView.setCanLoadMore(false);
-		new NewsAsyncTask(mLoadingView).execute(0);
+		updateItemStatu();
 	}
 
 	private class NewsAsyncTask extends AsyncTaskBase {
@@ -172,6 +172,10 @@ public class NewsFragment extends Fragment implements OnItemClickListener {
 		message.setData(bundle);
 		message.what = TAG_FRESH;
 		mHandler.sendMessage(message);
+	}
+	
+	public synchronized void updateItemStatu(){
+		new NewsAsyncTask(mLoadingView).execute(0);
 	}
 
 }

@@ -25,15 +25,7 @@
             android:background="@drawable/userhead1"
             android:clickable="true"
             android:contentDescription="@string/app_name" />
-        <!-- android:layout_marginTop="18dp" -->
-
-        <!-- <TextView
-            android:id="@+id/tv_sendtime"
-            style="@style/chat_text_date_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="17dp"
-            android:layout_toRightOf="@id/iv_userhead" /> -->
+        
         <TextView android:id="@+id/tv_sendername"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"

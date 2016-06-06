@@ -155,8 +155,8 @@ public class NewsFragmentFather extends Fragment {
 		});
 	}
 
-	public void updateMessageList(ArrayList<RecentChat> list) {
-		newsFragment.updateItemStatu(list);
+	public void updateMessageList(){
+		newsFragment.updateItemStatu();
 	}
 
 }
