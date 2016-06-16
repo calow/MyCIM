@@ -115,6 +115,9 @@ public class LoginActivity extends CIMMonitorActivity {
 					startActivity(intent);
 					finish();
 				}
+				else {
+					showToast("用户名或者密码错误:" + code);
+				}
 			}
 			
 			@Override

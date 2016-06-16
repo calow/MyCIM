@@ -99,4 +99,11 @@
     <string name="userNameText">10002</string>
     <string name="password">123123</string>
     
+    <string name="string_cim">你已获得CIM号码</string>
+    <string name="tv_cim_number">525203053</string>
+    <string name="tv_register_result">启用通讯录查找更多好友,直接发起CIM聊天,我已阅读并同意</string>
+    <string name="register_success">进入CIM</string>
+    <string name="tv_register_success">注册成功</string>
+    <string name="tv_tiaokuan">服务声明</string>
+    
 </resources>

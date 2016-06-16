@@ -9,4 +9,62 @@
         android:layout_width="match_parent"
         android:layout_height="60dp" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:gravity="center_horizontal"
+        android:text="@string/string_cim"
+        android:textColor="@color/gray_font"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_cim_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="@string/tv_cim_number"
+        android:textSize="30sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <CheckBox
+            android:id="@+id/ck_agreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/checkbox"
+            android:button="@null"
+            android:checked="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="@string/tv_register_result"
+            android:textColor="@color/gray_font"
+            android:textSize="16sp" />
+
+        <com.example.cim.view.TextURLView
+            android:id="@+id/tv_tiaokuan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/register_success"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:layout_margin="20dp"
+        android:background="@drawable/login_btn"
+        android:text="@string/register_success"
+        android:textColor="@color/whites"
+        android:textSize="16sp" />
+
 </LinearLayout>
