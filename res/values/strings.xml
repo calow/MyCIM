@@ -106,4 +106,6 @@
     <string name="tv_register_success">注册成功</string>
     <string name="tv_tiaokuan">服务声明</string>
     
+    <string name="string_addFriend">添加朋友</string>
+    
 </resources>

@@ -82,7 +82,7 @@ public class CallFragment extends Fragment {
 		protected Integer doInBackground(Integer... params) {
 			int result = -1;
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(100);
 				result=1;
 			} catch (InterruptedException e) {
 				e.printStackTrace();

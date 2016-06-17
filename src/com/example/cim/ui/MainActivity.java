@@ -6,6 +6,7 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -132,7 +133,10 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 
 			@Override
 			public void onClick(View v) {
-
+				CIMPushManager.destory(mContext);
+				Intent intent = new Intent(mContext, LoginActivity.class);
+				startActivity(intent);
+				finish();
 			}
 		});
 
@@ -140,7 +144,14 @@ public class MainActivity extends CIMMonitorFragmentActivity {
 
 			@Override
 			public void onClick(View v) {
-				finish();
+				ArrayList<Activity> list = MyActivityManager.getLists();
+	    		for(int i = 0; i < list.size(); i++){
+	    			if(MainActivity.this != list.get(i)){
+	    				list.get(i).finish();
+	    			}
+	    		}
+	    		finish();
+	    		System.exit(0);
 			}
 		});
 	}

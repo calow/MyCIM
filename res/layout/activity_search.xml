@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/rl_search_first"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <com.example.cim.view.TitleBarView
+            android:id="@+id/title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" />
+
+        <include 
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_below="@id/title_bar"
+            layout="@layout/common_search_l" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_search_second"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F0FFFFFF"
+        android:visibility="gone" >
+
+        <com.example.cim.view.ClearEditText
+            android:id="@+id/filter_edit"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/acm_inputbox"
+            android:drawableLeft="@drawable/search"
+            android:hint="@string/search"
+            android:singleLine="true"
+            android:textSize="15.0sp" 
+            android:imeOptions="actionSearch"/>
+
+        <ListView
+            android:id="@+id/lv_search_result"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/filter_edit" >
+        </ListView>
+    </RelativeLayout>
+
+</RelativeLayout>

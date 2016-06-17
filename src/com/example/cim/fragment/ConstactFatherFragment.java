@@ -3,9 +3,11 @@ package com.example.cim.fragment;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import com.example.cim.R;
+import com.example.cim.ui.SearchActivity;
 import com.example.cim.view.TitleBarView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -43,6 +45,14 @@ public class ConstactFatherFragment extends Fragment {
 				View.VISIBLE);
 		mTitleBarView.setBtnLeft(R.string.control);
 		mTitleBarView.setBtnRight(R.drawable.qq_constact);
+		mTitleBarView.setBtnRightOnclickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mContext, SearchActivity.class);
+				mContext.startActivity(intent);
+			}
+		});
 
 		mTitleBarView.setTitleLeft(R.string.group);
 		mTitleBarView.setTitleRight(R.string.all);
