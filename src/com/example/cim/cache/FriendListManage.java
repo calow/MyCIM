@@ -99,6 +99,8 @@ public class FriendListManage {
 												jsonObject1.getInt("groupId"));
 										values2.put("F_GroupID", jsonObject2
 												.getInt("chatRoomId"));
+										values2.put("F_GroupName", jsonObject2
+												.getString("chatRoomName"));
 										values2.put("F_Signture",
 												jsonObject2.getString("signture"));
 										values2.put("F_FlagCode", flagCode);
@@ -142,7 +144,7 @@ public class FriendListManage {
 			Cursor cursor2 = DBManager.getInstance(mContext).select(
 					MyDatabaseHelper.TABLE_FRIEND,
 					new String[] { "F_NickName", "F_Signture", "F_OnlineCode",
-							"F_GroupID", "F_FriendID" },
+							"F_GroupID", "F_GroupName", "F_FriendID" },
 					"F_UserID = ? and F_FriendGroupID = ? and F_FlagCode = ?",
 					new String[] { userAccount, id, flagCode }, null, null,
 					"F_OnlineCode desc", database);
@@ -154,6 +156,7 @@ public class FriendListManage {
 				rc.setImgPath(TestData.dir + TestData.names[i % 8]);
 				rc.setStatu(cursor2.getString(cursor2.getColumnIndex("F_OnlineCode")));
 				rc.setGroupId(cursor2.getString(cursor2.getColumnIndex("F_GroupID")));
+				rc.setGroupName(cursor2.getString(cursor2.getColumnIndex("F_GroupName")));
 				rc.setUserId(cursor2.getString(cursor2.getColumnIndex("F_FriendID")));
 				listChat.add(rc);
 			}

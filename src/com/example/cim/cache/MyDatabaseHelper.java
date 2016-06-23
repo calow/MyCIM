@@ -71,6 +71,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 			+ "  F_OnlineValue varchar(10) NOT NULL,"
 			+ "  F_FriendGroupID int NOT NULL,"
 			+ "  F_GroupID int NOT NULL,"
+			+ "  F_GroupName varchar(50) NOT NULL,"
 			+ "  F_Signture varchar(100) DEFAULT NULL,"
 			+ "  F_FlagCode varchar(50) NOT NULL,"
 			+ "  PRIMARY KEY (F_ID)"

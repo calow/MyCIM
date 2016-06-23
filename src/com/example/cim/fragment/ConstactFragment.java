@@ -93,7 +93,7 @@ public class ConstactFragment extends Fragment {
 				Intent intent = new Intent(mContext, ChatActivity.class);
 				intent.putExtra("id", chat.getGroupId());
 				intent.putExtra("userName", chat.getUserName());
-				intent.putExtra("groupType", chat.getGroupType());
+				intent.putExtra("groupType", 1);
 				intent.putExtra("groupName", chat.getGroupName());
 				mContext.startActivity(intent);
 				return true;
