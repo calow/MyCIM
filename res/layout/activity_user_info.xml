@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EFEFEF" >
+
+    <com.example.cim.view.TitleBarView
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+
+    <LinearLayout
+        android:id="@+id/ll_user_info_set"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@id/title_bar"
+        android:layout_marginTop="30dp"
+        android:background="#FFFFFF"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/iv_user_info_head"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/h001" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1000" >
+
+            <TextView
+                android:id="@+id/tv_user_info_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/string_user_info_name"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_user_info_signture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_user_info_name"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/string_user_info_signature"
+                android:textSize="13sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_user_info_set"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="20dp" >
+
+        <Button
+            android:id="@+id/btn_user_info_add_abs"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/add_friend_btn_abs"
+            android:text="@string/string_add_friend_abs"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btn_user_info_add_sure"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/btn_user_info_add_abs"
+            android:background="@drawable/add_friend_btn_sure"
+            android:text="@string/string_add_friend_sure"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:visibility="gone" />
+        
+        <Button 
+           android:id="@+id/btn_user_info_delete_friend"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/btn_user_info_add_sure"
+            android:background="@drawable/add_friend_btn_sure"
+            android:text="@string/string_delete_friend"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -108,4 +108,16 @@
     
     <string name="string_addFriend">添加朋友</string>
     
+    <string name="string_user_info_name">用户名</string>
+    
+    <string name="string_user_info_signature">签名</string>
+    
+    <string name="string_add_friend_abs">强制添加好友</string>
+    
+    <string name="string_add_friend_sure">请求添加好友</string>
+    
+    <string name="string_delete_friend">删除好友</string>
+    
+    <string name="string_friend_detail_info">详细资料</string>
+    
 </resources>

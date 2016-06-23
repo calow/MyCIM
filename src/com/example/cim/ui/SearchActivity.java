@@ -19,6 +19,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -33,6 +35,7 @@ import com.example.cim.network.API;
 import com.example.cim.network.HttpRequest;
 import com.example.cim.network.HttpRequest.HttpCompliteListener;
 import com.example.cim.ui.base.CIMMonitorActivity;
+import com.example.cim.util.CIMDataConfig;
 import com.example.cim.view.ClearEditText;
 import com.example.cim.view.TitleBarView;
 
@@ -61,6 +64,20 @@ public class SearchActivity extends CIMMonitorActivity implements
 			switch (msg.what) {
 			case 1024:
 				mAdapter.notifyDataSetChanged();
+				break;
+			case 1025:
+				showToast("查找出错");
+				break;
+			case 1026:
+				showToast("查找异常");
+				break;
+			case 1027:
+				int code = msg.getData().getInt("code");
+				showToast("搜索异常:" + code);
+				break;
+			case 1028:
+				String e = msg.getData().getString("e");
+				showToast("搜索出错:" + e);
 				break;
 			}
 		}
@@ -112,6 +129,23 @@ public class SearchActivity extends CIMMonitorActivity implements
 		mLists = new ArrayList<SearchUserItem>();
 		mAdapter = new UsersAdapter(this, mLists, mListView);
 		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				SearchUserItem item = mLists.get(position);
+				Intent intent = new Intent(SearchActivity.this,
+						UserInfoOrAddActivity.class);
+				intent.putExtra("userId", item.getUserId());
+				intent.putExtra("userName", item.getUserName());
+				intent.putExtra("userFeel", item.getUserFeel());
+				intent.putExtra("userState", item.getUserState());
+				intent.putExtra("type", "add");
+				startActivity(intent);
+			}
+
+		});
 	}
 
 	@Override
@@ -141,6 +175,8 @@ public class SearchActivity extends CIMMonitorActivity implements
 		showProgressDialog("提示", "正在搜索，请稍后......");
 		Map<String, String> user = new HashMap<String, String>();
 		user.put("ULoginId", searchValue);
+		user.put("UNickName",
+				CIMDataConfig.getString(this, CIMDataConfig.KEY_ACCOUNT));
 		HttpRequest request = new HttpRequest(new HttpCompliteListener() {
 
 			@Override
@@ -172,26 +208,30 @@ public class SearchActivity extends CIMMonitorActivity implements
 						mLists.addAll(items);
 						mHandler.sendEmptyMessage(1024);
 					} else {
-						Toast.makeText(SearchActivity.this, "查找出错",
-								Toast.LENGTH_SHORT).show();
+						mHandler.sendEmptyMessage(1025);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
-					Toast.makeText(SearchActivity.this, "查找异常",
-							Toast.LENGTH_SHORT).show();
+					mHandler.sendEmptyMessage(1026);
 				}
 			}
 
 			@Override
 			public void onResponseError(int code) {
 				hideProgressDialog();
-				showToast("搜索异常:" + code);
+				Message msg = new Message();
+				msg.what = 1027;
+				msg.getData().putInt("code", code);
+				mHandler.sendMessage(msg);
 			}
 
 			@Override
 			public void onRequestException(Exception e) {
 				hideProgressDialog();
-				showToast("搜索出错:" + e);
+				Message msg = new Message();
+				msg.what = 1028;
+				msg.getData().putString("e", e.toString());
+				mHandler.sendMessage(msg);
 			}
 		});
 		request.httpPost(API.USERSEARCH_URL, user);

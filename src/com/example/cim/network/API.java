@@ -26,6 +26,7 @@ public class API {
 	public final static String UserLogin_URL = Constant.SERVER_URL + "/user/user_login.action";
 	public final static String USERREGISTER_URL = Constant.SERVER_URL + "/user/user_register.action";
 	public final static String USERSEARCH_URL = Constant.SERVER_URL + "/user/user_search.action";
+	public final static String USEADDFRIENDABS_URL = Constant.SERVER_URL + "/user/user_add_friend_abs.action";
 	public final static String UpAndDown_URL = Constant.SERVER_URL + "/upanddown/";
 	public final static String PcToolList_URL = Constant.SERVER_URL + "/tool/tool_pc_list.action";
 	public final static String PhoneToolList_URL = Constant.SERVER_URL + "/tool/tool_phone_list.action";

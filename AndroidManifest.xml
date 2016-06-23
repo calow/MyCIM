@@ -75,6 +75,10 @@
         <activity
             android:name="com.example.cim.ui.SearchActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar" />
+        
+        <activity
+            android:name="com.example.cim.ui.UserInfoOrAddActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
 
         <!-- 推送服务 -->
         <service
